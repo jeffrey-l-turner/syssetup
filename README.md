@@ -21,7 +21,7 @@ follows:
 cd $HOME
 sudo apt-get install -y git-core
 git clone git@github.com:jeffrey-l-turner/syssetup.git
-./syssetup/setup.sh   
+sh ./syssetup/setup.sh   
 ```
 
 See also http://github.com/jeffrey-l-turner/dotfiles
