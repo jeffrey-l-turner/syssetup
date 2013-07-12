@@ -39,5 +39,6 @@ ln -sb dotfiles/.screenrc .
 ln -sb dotfiles/.bash_profile .
 ln -sb dotfiles/.bashrc .
 ln -sb dotfiles/.bashrc_custom .
+ln -sb dotfiles/.bash_logout .
 ln -sb dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
