@@ -48,3 +48,7 @@ else
     mkdir .ssh
 fi
 cat ssh-config >> .ssh/config
+
+#Install Heroku tool belt
+wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+
