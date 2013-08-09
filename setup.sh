@@ -42,4 +42,9 @@ ln -sb dotfiles/.bashrc_custom .
 ln -sb dotfiles/.bash_logout .
 ln -sb dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
+if [ -d .ssh/ ]; then
+    touch .ssh/config
+else
+    mkdir .ssh
+fi
 ln -sbf dotfiles/ssh-config .ssh/
