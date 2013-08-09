@@ -10,17 +10,13 @@ setup.git
 =========
 Clone and run this on a new EC2 instance running Ubuntu (tested on 12 and 13). You may wish to setup and install ssh keys prior to setup. To do so:
 `ssh-keygen -t rsa -f ~/.ssh/<key-name>` then `chmod 400 ~/.ssh/<key-name>`;
-copy/paste key to Github account (under account settings); edit ~/.ssh/config and replace <keyname> with gen'ed ssh key;
-test by executing: `ssh -T git@github.com`
+copy/paste key to Github account (under account settings). 
 
 Configure both the machine and your individual development environment as
 follows:
 
-```sh
-cd $HOME
-sudo apt-get install -y git-core
-git clone git@github.com:jeffrey-l-turner/syssetup.git
-sh ./syssetup/setup.sh   
-```
+`curl https://raw.github.com/startup-class/setup/master/setup.sh | bash`
+
+edit ~/.ssh/config and replace <keyname> with gen'ed ssh key; test by executing: `ssh -T git@github.com`
 
 See also http://github.com/jeffrey-l-turner/dotfiles
