@@ -16,6 +16,7 @@ follows:
 
 `curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
 
-edit ~/.ssh/config and replace <keyname> with gen'ed ssh key; test by executing: `ssh -T git@github.com`
+edit ~/.ssh/config and replace <key-name> with gen'ed ssh key; 
+test by executing: `ssh -T git@github.com`
 
 See also http://github.com/jeffrey-l-turner/dotfiles
