@@ -17,9 +17,9 @@ follows:
 `curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
 
 edit ~/.ssh/config and replace <key-name> with gen'ed ssh key; if setting up Heroku keys, also modify <key-name>-heroku in config file.
-execut `heroku keys:add <key-name>-heroku`; Note: this key can be the same as the GitHub key;
+execute `heroku keys:add <key-name>-heroku`; Note: this key can be the same as the GitHub key;
 
-test by executing: `ssh -T git@github.com`
+Test by executing: `ssh -T git@github.com`; and
 test by executing: `ssh -vT git@heroku.com`; Note: shell request will fail but message will show "Authentication succeeded (publickey)."
 
 Logout of shell and log back in to properly setup environment.
