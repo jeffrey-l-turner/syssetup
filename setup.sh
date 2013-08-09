@@ -47,4 +47,4 @@ if [ -d .ssh/ ]; then
 else
     mkdir .ssh
 fi
-ln -sbf dotfiles/ssh-config .ssh/
+cat ssh-config >> .ssh/config
