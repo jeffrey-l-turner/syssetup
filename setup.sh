@@ -44,6 +44,7 @@ ln -sb dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
 if [ -d .ssh/ ]; then
     touch .ssh/config
+    chmod 600 .ssh/config
 else
     mkdir .ssh
 fi
