@@ -42,3 +42,4 @@ ln -sb dotfiles/.bashrc_custom .
 ln -sb dotfiles/.bash_logout .
 ln -sb dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
+ln -sbf dotfiles/ssh-config .ssh/
