@@ -9,8 +9,7 @@ This is simply a script customized cloned from github.com:startup-class/setup.gi
 setup.git
 =========
 Clone and run this on a new EC2 instance running Ubuntu (tested on 12 and 13). You may wish to setup and install ssh keys prior to setup. To do so:
-`ssh-keygen -t rsa -f ~/.ssh/<key-name>` then `chmod 400 ~/.ssh/<key-name>`;
-copy/paste key to Github account (under account settings). 
+`ssh-keygen -t rsa -f ~/.ssh/<key-name>` then `chmod 400 ~/.ssh/<key-name>`; copy/paste key to Github account (under account settings). 
 
 Configure both the machine and your individual development environment as
 follows:
