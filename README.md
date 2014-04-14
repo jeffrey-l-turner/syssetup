@@ -13,7 +13,7 @@ This setup script now offers an interactive menu for setup of both ssh keys (for
 Configure both the machine and your individual development environment as
 follows:
 
-`curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
+`curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
 
 After optionally generating Heroku and GitHub keys, place the public keys (~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
 
