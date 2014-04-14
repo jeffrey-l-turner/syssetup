@@ -229,6 +229,9 @@ $AppInstall install -y rlwrap
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
 if [ "${OS}" == "mac" ]; then
   $AppInstall install mongodb 
+elif [ "${DistroBasedOn}" == "redhat" ]; then
+    echo "Must manually install MongoDB on RHEL"
+    echo "       Mongo DB not installed!!"
 else
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
@@ -239,6 +242,9 @@ fi
 # Install emacs24 on other OSes than Mac OS
 if [ "${OS}" == "mac" ]; then
     $AppInstall install --cocoa emacs 
+elif [ "${DistroBasedOn}" == "redhat" ]; then
+    echo "Must manually install emacs24 on RHEL"
+    echo "      Emacs not installed!!"
 else
 # https://launchpad.net/~cassou/+archive/emacs
     $AppInstall add-apt-repository -y ppa:cassou/emacs
