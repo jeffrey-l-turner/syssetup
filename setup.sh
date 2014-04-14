@@ -102,7 +102,6 @@ fi
 # These are functions to setup ssh keys for Heroku and GitHub:
 # The keys must still be registered with the respective accounts by the user
 herokuKey="false"
-githubKey="false"
 genHeroku(){
     echo -e '\t Generating Heroku Key (~/.ssh/heroku-rsa)'
     echo "Enter email address for Heroku key:"
@@ -155,7 +154,7 @@ printMenu(){
     echo "=============================================================================================================="
     echo "= You may also generate SSH keys for use with Heroku or GitHub prior to setup by selecting the options below ="
     echo "=============================================================================================================="
-    echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa)"
+    echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
     echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
     echo -e "\t3) Continue Setup"
     echo -e "\t4) Exit Now!"
@@ -269,12 +268,14 @@ ln $lnopts dotfiles/.bash_logout .
 ln $lnopts dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
 
-#Install Heroku tool belt
+#Install Heroku tool belt if Heroku keys were installed in ~/.ssh
 #Install wget and use different install if Mac OS:
-if [ "${OS}" == "mac" ]; then
-    $AppInstall install wget
-    wget -qO- https://toolbelt.heroku.com/install.sh | sh
-else
-    wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+if [ "$herokuKey" == "true" ]; then
+    if [ "${OS}" == "mac" ]; then
+        $AppInstall install wget
+        wget -qO- https://toolbelt.heroku.com/install.sh | sh
+    else
+        wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+    fi
 fi
 
