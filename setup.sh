@@ -270,6 +270,11 @@ ln $lnopts dotfiles/.bash_logout .
 ln $lnopts dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
 
+#If using Mac, copy terminal settings files over to home as well
+if [ "${OS}" == "mac" ]; then
+    ln $lnopts dotfiles/.term_settings/* ./term_settings
+fi
+
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
 #Install wget and use different install if Mac OS:
 if [ "$herokuKey" == "true" ]; then
