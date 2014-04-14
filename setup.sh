@@ -253,6 +253,7 @@ fi
 
 # Call to put dotfiles in place
 cloneDotFiles;
+cd $HOME
 
 if [ "${OS}" == "mac" ]; then
     lnopts="-si "
@@ -263,7 +264,8 @@ ln $lnopts dotfiles/.screenrc .
 ln $lnopts dotfiles/.bash_profile .
 ln $lnopts dotfiles/.bashrc .
 
-ln $lnopts dotfiles/.bashrc_custom .
+# append to custom rc file rather than linking -- this is changed from Balaji's script
+cat dotfiles/.bashrc_custom >> .bashrc_custom
 ln $lnopts dotfiles/.bash_logout .
 ln $lnopts dotfiles/.vimrc
 ln -sf dotfiles/.emacs.d .
