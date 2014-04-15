@@ -155,7 +155,7 @@ shootProfile
 printMenu(){
     
     clear
-    echo -e '\n\033[47;35m'"\033[1m    Headless Server setup for Node.js, rlwrap, Heroku toolbelt, and standard config files as well as                 "
+    echo -e '\n\033[46;69m'"\033[1m    Headless Server setup for Node.js, rlwrap, Heroku toolbelt, and standard config files as well as                 "
     echo -e "         setting up a standard emacs or vim developer environment depending upon specified configuration below.      "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     echo "OS: $OS"
@@ -193,9 +193,9 @@ printMenu(){
     echo -e "\t5) Continue Setup"
     echo "Press ^C, q or 4 if the above system information is not correct or you wish to abort installation"
     echo " "
-    echo "Press press 5 to proceed"
+    echo "Press press 5, c, or y to proceed"
     read option;
-    while [[ $option -gt 12 || ! $(echo $option | grep '^[1-5qQ]$') ]]
+    while [[ $option -gt 12 || ! $(echo $option | grep '^[1-5qQyc]$') ]]
     do
         printMenu
     done
@@ -219,6 +219,8 @@ runOption(){
         4) exit;;
         q) exit;;
         Q) exit;;
+        y) setFlags;;
+        c) setFlags;;
         5) setFlags
     esac 
     echo "Press return to continue"
