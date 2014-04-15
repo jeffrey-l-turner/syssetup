@@ -253,13 +253,15 @@ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 source $HOME/.nvm/nvm.sh
 nvm install $nvmuse
 nvm use $nvmuse
+# Set npm to local version and then use sudo for global installation
+npm="$HOME/.nvm/$nvmuse/bin/npm"
 
 # Install jshint to allow checking of JS code within emacs and node history (locally)
 # http://jshint.com/
-sudo npm install -g jshint
-sudo npm install -g jslint
-sudo npm install -g js-beautify 
-npm install repl.history
+sudo $npm install -g jshint
+sudo $npm install -g jslint
+sudo $npm install -g js-beautify 
+$npm install repl.history
 
 # Install rlwrap to provide libreadline features with node
 # See: http://nodejs.org/api/repl.html#repl_repl
