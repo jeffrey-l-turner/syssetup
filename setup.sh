@@ -262,6 +262,7 @@ npm="$HOME/.nvm/$nvmuse/bin/npm"
 
 # Install jshint to allow checking of JS code within emacs and node history (locally)
 # http://jshint.com/
+echo "use sudo password for following if prompted"
 sudo $npm install -g jshint
 sudo $npm install -g jslint
 sudo $npm install -g js-beautify 
