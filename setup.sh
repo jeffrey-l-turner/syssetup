@@ -8,7 +8,7 @@ nvmuse="v0.10.19"
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
-vundle="https://github.com/gmarik/vundlegit"
+vundle="https://github.com/gmarik/vundle.git"
 vimColorSchemes="git@github.com:dgvigil/vim-colorschemes.git"
     
 
