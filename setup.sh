@@ -331,7 +331,7 @@ ln $lnopts dotfiles/.bash_logout .
 if [ "${editorInstall}" == "emacs" ] ; then
     ln -sf dotfiles/.emacs.d .
 else
-    ln $lnopts dotfiles/.vimrc $HOME
+    cp -f dotfiles/.vimrc $HOME
     # Warn user that non-interactive vim will show and to wait for process to complete
     sleep 2
     echo " "
