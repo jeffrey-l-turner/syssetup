@@ -156,7 +156,7 @@ printMenu(){
     
     clear
     echo -e '\n\033[46;69m'"\033[1m    Headless Server setup for Node.js, rlwrap, Heroku toolbelt, and standard config files as well as                 "
-    echo -e "         setting up a standard emacs or vim developer environment depending upon specified configuration below.      "
+    echo -e "           a standard emacs or vim developer environment depending upon specified configuration below.               "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     echo "OS: $OS"
     echo "DIST: $DIST"
