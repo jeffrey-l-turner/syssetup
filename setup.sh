@@ -299,12 +299,7 @@ if [ "${editorInstall}" == "emacs" ] ; then
     fi
 else
 # Install VIM configuration files including vundle and colorschemes
-    if [ -d $HOME/.vim/ ]; then
-        mkdir $HOME/.vim/bundle
-    else
-        mkdir $HOME/.vim
-        mkdir $HOME/.vim/bundle
-    fi
+    mkdir -p $HOME/.vim/bundle
     # These use configuration specified in dotfiles/.vimrc:
     git clone $vundle $HOME/.vim/bundle/vundle
     git clone $vimColorSchemes $HOME/.vim
