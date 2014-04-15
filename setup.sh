@@ -27,6 +27,9 @@ cloneDotFiles(){
             mv .emacs.d .emacs.d~
         fi
         git clone $gitdotfiles
+        if [ "${OS}" != "mac" ]; then
+            rm -rf $HOME/dotfiles/.term_settings
+        fi
     fi
     dotFilesCloned="true"
 }
@@ -328,6 +331,10 @@ if [ "${editorInstall}" == "emacs" ] ; then
     ln -sf dotfiles/.emacs.d .
 else
     ln $lnopts dotfiles/.vimrc $HOME
+    # Warn user that non-interactive vim will show and to wait for process to complete
+    sleep 4
+    echo -e '\n\033[43;35m'" vim will now be run non-interactively to install the bundles and plugins"
+    echo -e                "Please wait for this process to be completed -- it may take a few moments\033[0m\n"
     # Install bundles and plugins for vim
     vim +PluginInstall +qall
     vim +BundleInstall +qall
@@ -335,7 +342,8 @@ fi
 
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
-    ln $lnopts dotfiles/.term_settings/* ./term_settings
+    mkdir -p $HOME/.term_settings
+    ln $lnopts dotfiles/.term_settings/* $HOME/.term_settings
 fi
 
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
