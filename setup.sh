@@ -335,8 +335,8 @@ else
     # Warn user that non-interactive vim will show and to wait for process to complete
     sleep 2
     echo " "
-    echo -e '\n\033[43;35m'" vim will now be run non-interactively to install the bundles and plugins\033[0m   "
-    echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  \n"
+    echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
+    echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
     echo " "
     echo "press return to complete process"
     read q
