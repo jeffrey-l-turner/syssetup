@@ -199,10 +199,10 @@ printMenu(){
     do
         printMenu
     done
-    if [ "$option" == "5" ]; then
+    if [ "$option" == "5" || "$option" == "c" || "$option" == "y" ]; then
         echo "Starting installation..."
         echo 
-        wait 1
+        sleep 1
         return;
     fi
     runOption
