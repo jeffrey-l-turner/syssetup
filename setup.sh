@@ -302,7 +302,7 @@ else
         mkdir $HOME/.vim/bundle
     fi
     # These use configuration specified in dotfiles/.vimrc:
-    git clone $vundle $HOME/vim/bundle/vundle
+    git clone $vundle $HOME/.vim/bundle/vundle
     git clone $vimColorSchemes $HOME/.vim
 fi
 
