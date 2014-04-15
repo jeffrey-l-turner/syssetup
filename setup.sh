@@ -9,8 +9,7 @@ gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
 vundle="https://github.com/gmarik/vundle.git"
-vimColorSchemes="git@github.com:dgvigil/vim-colorschemes.git"
-    
+ 
 
 lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
@@ -300,15 +299,14 @@ if [ "${editorInstall}" == "emacs" ] ; then
 else
 # Install VIM configuration files including vundle and colorschemes
     # These use configuration specified in dotfiles/.vimrc:
-    if [ -d $HOME/.vim ]; then
-        mv $HOME/.vim $HOME/.vim.old
+    if [ -d $HOME/.vim/bundle ]; then
+        mv $HOME/.vim/bundle $HOME/.vim/bundle.old
     fi
-    git clone $vimColorSchemes $HOME/.vim
     mkdir -p $HOME/.vim/bundle
     git clone $vundle $HOME/.vim/bundle/vundle
 fi
 
-# Call to put dotfiles in place
+# Call to put dotfiles in place if not already there
 cloneDotFiles;
 cd $HOME
 
@@ -329,7 +327,7 @@ ln $lnopts dotfiles/.bash_logout .
 if [ "${editorInstall}" == "emacs" ] ; then
     ln -sf dotfiles/.emacs.d .
 else
-    ln $lnopts dotfiles/.vimrc
+    ln $lnopts dotfiles/.vimrc $HOME
     # Install bundles and plugins for vim
     vim +PluginInstall +qall
     vim +BundleInstall +qall
