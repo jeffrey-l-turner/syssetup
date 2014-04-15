@@ -157,8 +157,8 @@ shootProfile
 printMenu(){
     
     clear
-    echo -e '\n\033[46;69m'"\033[1m    Headless Server setup for Node.js, rlwrap, Heroku toolbelt, and standard config files as well as                 "
-    echo -e "           a standard emacs or vim developer environment depending upon specified configuration below.               "
+    echo -e '\n\033[46;69m'"\033[1m    Headless server setup for Node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
+    echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     echo "OS: $OS"
     echo "DIST: $DIST"
@@ -179,7 +179,7 @@ printMenu(){
     fi
     if [ "${OS}" == "mac" ]; then
         echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
-        echo -e "with use of Macports or Fink!\033[0m\n"
+        echo -e "                                      with use of Macports or Fink!                                  \033[0m\n"
     fi
     echo " "
     echo "=============================================================================================================="
@@ -333,12 +333,19 @@ if [ "${editorInstall}" == "emacs" ] ; then
 else
     ln $lnopts dotfiles/.vimrc $HOME
     # Warn user that non-interactive vim will show and to wait for process to complete
-    sleep 4
-    echo -e '\n\033[43;35m'" vim will now be run non-interactively to install the bundles and plugins"
-    echo -e                "Please wait for this process to be completed -- it may take a few moments\033[0m\n"
+    sleep 2
+    echo " "
+    echo -e '\n\033[43;35m'" vim will now be run non-interactively to install the bundles and plugins "
+    echo -e " Please wait for this process to be completed -- it may take a few moments\033[0m  \n"
+    #echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
+    #echo -e "                                      with use of Macports or Fink!                                  \033[0m\n"
+    echo " "
+    echo "press return to complete process"
+    read q
     # Install bundles and plugins for vim
     vim +PluginInstall +qall
     vim +BundleInstall +qall
+    echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
 fi
 
 #If using Mac, copy terminal settings files over to home as well
