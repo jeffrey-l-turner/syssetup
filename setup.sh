@@ -179,9 +179,11 @@ printMenu(){
         echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
         echo -e "with use of Macports or Fink!\033[0m\n"
     fi
+    echo " "
     echo "=============================================================================================================="
     echo "= You may also generate SSH keys for use with Heroku or GitHub prior to setup by selecting the options below ="
     echo "=============================================================================================================="
+    echo " "
     echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
     echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
     if [ "${editorInstall}" = "vim" ] ; then
