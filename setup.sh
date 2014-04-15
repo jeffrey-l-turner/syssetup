@@ -321,6 +321,7 @@ fi
 ln $lnopts dotfiles/.screenrc .
 ln $lnopts dotfiles/.bash_profile .
 ln $lnopts dotfiles/.bashrc .
+ln $lnopts dotfiles/.jshintrc .
 
 # append to custom rc file rather than linking -- this is changed from Balaji's script
 cat dotfiles/.bashrc_custom >> .bashrc_custom
