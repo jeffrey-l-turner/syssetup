@@ -364,3 +364,6 @@ if [ "$herokuKey" == "true" ]; then
     fi
 fi
 
+echo " "
+echo "Be sure to logout and log back in to properly setup your environment"
+
