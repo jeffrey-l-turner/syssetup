@@ -172,6 +172,9 @@ printMenu(){
     else
          echo "Editor and configuration to be installed: "$editorInstall  
     fi
+    if [ "${herokuKey}" = "true" ] ; then
+         echo "Heroku key has been created and Heroku toolbelt will be installed. "
+    fi
     if [ "${OS}" == "mac" ]; then
         echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
         echo -e "with use of Macports or Fink!\033[0m\n"
