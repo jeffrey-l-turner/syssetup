@@ -98,12 +98,12 @@ shootProfile(){
 
 # Setup for config files using ssh:
 if [ -d $HOME/.ssh/ ]; then
-    touch .ssh/config
-    chmod 600 .ssh/config
+    touch $HOME/.ssh/config
+    chmod 600 $HOME/.ssh/config
 else
     mkdir $HOME/.ssh
-    touch .ssh/config
-    chmod 600 .ssh/config
+    touch $HOME/.ssh/config
+    chmod 600 $HOME/.ssh/config
 fi
 
 # These are functions to setup ssh keys for Heroku and GitHub:
@@ -150,6 +150,13 @@ toggleVimEmacs(){
 }
 
 shootProfile
+
+# setup ln options for dotfile linking
+if [ "${OS}" == "mac" ]; then
+    lnopts="-si "
+else
+    lnopts="-sb "
+fi
 
 ####################################################################
 # Print Menu
@@ -233,6 +240,63 @@ runOption(){
     printMenu
 }
 
+
+##[ -v "$PS1" ] && echo "-v PS1 reports No" || echo "-v PS1 reports Yes"
+echo TTY: `tty`
+tty -s
+if [[ $? -eq 0 ]] ; then
+    echo "tty -s status exit: 0"
+else
+    echo "tty -s status exit: non-zero"
+fi
+
+tty -s && echo "tty -s on PS1 reports this shell is interactive" || echo "tty -s on PS1 reports this shell is NOT interactive"
+
+# Why don't these work?
+if [[ -t 1 ]]; then    
+    echo "Output is a terminal"
+else    
+    echo "Output is NOT a terminal" >/dev/tty;
+fi
+if [[ "tty -s" -eq 0 ]] ; then
+    echo 'tty-s if-stmt: This terminal is interactive!!!' 
+else 
+    echo "tty-s if-stmt: this terminal is non-interactive"  
+fi
+ttytest=`tty -s`
+if [[ "$ttytest" -eq 0 ]] ; then
+    echo "TTY-S: This shell is interactive!"
+else
+    echo "TTY-S: This shell is NOT interactive!"
+fi
+
+if [ -t 1 ] ; then
+    echo "-t 1 reports this shell is interactive" 
+else
+    echo "-t 1 reports this shell is not interactive"
+fi
+sleep 10
+
+# if [ -t 1 ] ; then # no prompt? and non-interactive we'll just use defaults
+#     echo "non-interactive installation -- will use defaults without any editor setup"
+#     sleep 10
+#     lnopts="-sf " # force linking to overwrite existing files
+#     editorInstall="none" # do not load editor configs
+#     echo "OS: $OS"
+#     echo "DIST: $DIST"
+#     echo "PSEUDONAME: $PSEUDONAME"
+#     echo "REV: $REV"
+#     echo "DistroBasedOn: $DistroBasedOn"
+#     echo "KERNEL: $KERNEL"
+#     echo "MACH: $MACH"
+#     echo "Will use node version: $nvmuse" 
+#     echo "Application Installer: $AppInstall"  
+# else
+#     # interactive
+#     sleep 2
+#     printMenu
+# fi
+exit
 printMenu
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
@@ -314,37 +378,30 @@ fi
 cloneDotFiles;
 cd $HOME
 
-if [ "${OS}" == "mac" ]; then
-    lnopts="-si "
-else
-    lnopts="-sb "
-fi
-ln $lnopts dotfiles/.screenrc .
-ln $lnopts dotfiles/.bash_profile .
-ln $lnopts dotfiles/.bashrc .
-ln $lnopts dotfiles/.jshintrc .
+ln $lnopts dotfiles/.screenrc $HOME
+ln $lnopts dotfiles/.bash_profile $HOME
+ln $lnopts dotfiles/.bashrc $HOME
+ln $lnopts dotfiles/.jshintrc $HOME
+ln $lnopts dotfiles/.bash_logout $HOME
 
 # append to custom rc file rather than linking -- this is changed from Balaji's script
-cat dotfiles/.bashrc_custom >> .bashrc_custom
-ln $lnopts dotfiles/.bash_logout .
+cat dotfiles/.bashrc_custom >> $HOME/.bashrc_custom
 
 # Select whether to link vim or emacs dotfiles:
 if [ "${editorInstall}" == "emacs" ] ; then
-    ln -sf dotfiles/.emacs.d .
-else
-    cp -f dotfiles/.vimrc $HOME
+        ln -sf dotfiles/.emacs.d .
+   elif [ "${editorInstall}" == "vim" ];then 
+        cp -f dotfiles/.vimrc $HOME
     # Warn user that non-interactive vim will show and to wait for process to complete
-    sleep 2
-    echo " "
-    echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
-    echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
-    echo " "
-    echo "press return to complete process"
-    read q
+        echo " "
+        echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
+        echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
+        echo " "
+        sleep 7
     # Install bundles and plugins for vim
-    vim +PluginInstall +qall
-    vim +BundleInstall +qall
-    echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
+        vim +PluginInstall +qall
+        vim +BundleInstall +qall
+        echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
 fi
 
 #If using Mac, copy terminal settings files over to home as well
