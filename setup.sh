@@ -247,9 +247,7 @@ if [[ $? -eq 0 ]] ; then
     echo "Interactive mode..."
     printMenu
 else
-    echo "Non-Interactive mode..."
     echo "non-interactive installation -- will use defaults without any editor setup"
-    sleep 10
     lnopts="-sf " # force linking to overwrite existing files
     editorInstall="none" # do not load editor configs
     echo "OS: $OS"
@@ -261,7 +259,6 @@ else
     echo "MACH: $MACH"
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
-    exit
 fi
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances

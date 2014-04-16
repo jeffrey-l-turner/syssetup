@@ -10,9 +10,15 @@ setup.git
 This setup script now offers an interactive menu for setup of both ssh keys (for Heroku and Github)
 as well as identifying the system parameters prior to invocation. 
 
-Run the following from a terminal window on your virtual machine or Mac to setup your system:
+Run the following from a terminal window on your virtual machine or Mac to interactively setup your system:
 
 `curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
+
+Alternatively, you may also use a non-interactive setup using the defaults: 
+
+`curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
+
+These defaults will not install editors, and primarily designed for running a headless Node.js system.
 
 After optionally generating Heroku and GitHub keys, place the public keys (~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
 
