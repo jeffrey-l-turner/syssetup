@@ -20,7 +20,8 @@ Alternatively, you may also use a non-interactive setup using the defaults:
 
 These defaults will not install editors, and primarily designed for running a headless Node.js system.
 
-After optionally generating Heroku and GitHub keys, place the public keys (~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
+After running interactive setup, you may optionally generate Heroku and GitHub keys. Place the public keys
+(~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
 
 Test by executing: `ssh -T git@github.com`; and/or
 test by executing: `ssh -vT git@heroku.com`; 
