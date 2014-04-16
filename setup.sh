@@ -241,63 +241,28 @@ runOption(){
 }
 
 
-##[ -v "$PS1" ] && echo "-v PS1 reports No" || echo "-v PS1 reports Yes"
-echo TTY: `tty`
+# Only have susccesfully used following as means to test for interactivity
 tty -s
 if [[ $? -eq 0 ]] ; then
-    echo "tty -s status exit: 0"
+    echo "Interactive mode..."
+    printMenu
 else
-    echo "tty -s status exit: non-zero"
+    echo "Non-Interactive mode..."
+    echo "non-interactive installation -- will use defaults without any editor setup"
+    sleep 10
+    lnopts="-sf " # force linking to overwrite existing files
+    editorInstall="none" # do not load editor configs
+    echo "OS: $OS"
+    echo "DIST: $DIST"
+    echo "PSEUDONAME: $PSEUDONAME"
+    echo "REV: $REV"
+    echo "DistroBasedOn: $DistroBasedOn"
+    echo "KERNEL: $KERNEL"
+    echo "MACH: $MACH"
+    echo "Will use node version: $nvmuse" 
+    echo "Application Installer: $AppInstall"  
+    exit
 fi
-
-tty -s && echo "tty -s on PS1 reports this shell is interactive" || echo "tty -s on PS1 reports this shell is NOT interactive"
-
-# Why don't these work?
-if [[ -t 1 ]]; then    
-    echo "Output is a terminal"
-else    
-    echo "Output is NOT a terminal" >/dev/tty;
-fi
-if [[ "tty -s" -eq 0 ]] ; then
-    echo 'tty-s if-stmt: This terminal is interactive!!!' 
-else 
-    echo "tty-s if-stmt: this terminal is non-interactive"  
-fi
-ttytest=`tty -s`
-if [[ "$ttytest" -eq 0 ]] ; then
-    echo "TTY-S: This shell is interactive!"
-else
-    echo "TTY-S: This shell is NOT interactive!"
-fi
-
-if [ -t 1 ] ; then
-    echo "-t 1 reports this shell is interactive" 
-else
-    echo "-t 1 reports this shell is not interactive"
-fi
-sleep 10
-
-# if [ -t 1 ] ; then # no prompt? and non-interactive we'll just use defaults
-#     echo "non-interactive installation -- will use defaults without any editor setup"
-#     sleep 10
-#     lnopts="-sf " # force linking to overwrite existing files
-#     editorInstall="none" # do not load editor configs
-#     echo "OS: $OS"
-#     echo "DIST: $DIST"
-#     echo "PSEUDONAME: $PSEUDONAME"
-#     echo "REV: $REV"
-#     echo "DistroBasedOn: $DistroBasedOn"
-#     echo "KERNEL: $KERNEL"
-#     echo "MACH: $MACH"
-#     echo "Will use node version: $nvmuse" 
-#     echo "Application Installer: $AppInstall"  
-# else
-#     # interactive
-#     sleep 2
-#     printMenu
-# fi
-exit
-printMenu
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, RHEL and other Linux systems.
