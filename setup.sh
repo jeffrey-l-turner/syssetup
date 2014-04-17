@@ -15,11 +15,29 @@ lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
+# If using Mac OS, then install brew
+if [ "${OS}" == "mac" ]; then
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+fi
+
+gitInstalled="false"
+installGit() {
+    if [ "$gitInstalled" == "false" ]; then
+        if [ "${OS}" == "mac" ]; then
+            $AppInstall install git
+        else
+        $AppInstall install -y git-core 
+        fi
+    fi
+    gitInstalled="true"
+}
+
 # git pull and install dotfiles if not already cloned previously- modified as function for use with adding ssh keys
 dotFilesCloned="false"
 cloneDotFiles(){
     if [ "$dotFilesCloned" == "false" ]; then
         cd $HOME
+        installGit
         if [ -d ./dotfiles/ ]; then
             mv dotfiles dotfiles.old
         fi
@@ -120,6 +138,7 @@ genHeroku(){
     echo "Note: you must still upload your key to your Heroku account!"
 }
 
+githubKey="false"
 genGitHub(){
     echo -e '\t Generating GitHub Key (~/.ssh/github-rsa)'
     echo "Enter email address for GitHub key:"
@@ -176,13 +195,12 @@ printMenu(){
     echo "MACH: $MACH"
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
-    if [ "${editorInstall}" = "vim" ] ; then
-         echo "Editor and configuration to be installed: "$editorInstall  
-    else
-         echo "Editor and configuration to be installed: "$editorInstall  
-    fi
+    echo "Editor and configuration to be installed: "$editorInstall  
     if [ "${herokuKey}" = "true" ] ; then
          echo "Heroku key has been created and Heroku toolbelt will be installed. "
+    fi
+    if [ "${githubKey}" == "true" ] ; then
+        echo "GitHub key has been created and placed in ~/.ssh/github.rsa"
     fi
     if [ "${OS}" == "mac" ]; then
         echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
@@ -194,7 +212,11 @@ printMenu(){
     echo "=============================================================================================================="
     echo " "
     echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
-    echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
+    if [ -e "$HOME/.ssh/github-rsa" ] ; then
+        echo -e "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
+    else
+        echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
+    fi
     if [ "${editorInstall}" = "vim" ] ; then
         echo -e "\t3) Toggle to install emacs instead of vim "
     else
@@ -265,18 +287,10 @@ fi
 # for headless setup.  Now modified to support MacOS, RHEL and other Linux systems.
 
 
-# If using Mac OS, then install brew
-if [ "${OS}" == "mac" ]; then
-    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-fi
+installGit  # Git installation now moved to function so that it can be used in clone functions
 
 # Install nvm: node-version manager
 # https://github.com/creationix/nvm
-if [ "${OS}" == "mac" ]; then
-    $AppInstall install git
-else
-    $AppInstall install -y git-core
-fi
 curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 
 # Load nvm and install latest production node
