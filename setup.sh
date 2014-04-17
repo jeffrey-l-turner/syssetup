@@ -212,7 +212,7 @@ printMenu(){
     echo "=============================================================================================================="
     echo " "
     if [ -e "$HOME/.ssh/heroku-rsa" ] ; then
-        echo -e "\t1) Heroku Key installed at ~/.ssh/heroku-rsa."
+        echo -e "\t1) Heroku Key installed at ~/.ssh/heroku-rsa. Press 2 to overwrite existing key and install toolbelt."
         if [ "${herokuKey}" = "true" ] ; then
             echo -e "Heroku Toolbelt will be (re-)installed."
         fi
