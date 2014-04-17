@@ -28,7 +28,7 @@ cloneDotFiles(){
         fi
         git clone $gitdotfiles
         if [ "${OS}" != "mac" ]; then
-            rm -rf $HOME/dotfiles/.term_settings
+            rm -rf $HOME/dotfiles/term_settings
         fi
     fi
     dotFilesCloned="true"
@@ -369,7 +369,7 @@ fi
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
     mkdir -p $HOME/.term_settings
-    ln $lnopts dotfiles/.term_settings/* $HOME/.term_settings
+    ln $lnopts dotfiles/term_settings/* $HOME/.term_settings
 fi
 
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
