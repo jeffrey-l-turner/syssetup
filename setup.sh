@@ -211,7 +211,14 @@ printMenu(){
     echo "= You may also generate SSH keys for use with Heroku or GitHub prior to setup by selecting the options below ="
     echo "=============================================================================================================="
     echo " "
-    echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
+    if [ -e "$HOME/.ssh/heroku-rsa" ] ; then
+        echo -e "\t1) Heroku Key installed at ~/.ssh/heroku-rsa."
+        if [ "${herokuKey}" = "true" ] ; then
+            echo -e "Heroku Toolbelt will be (re-)installed."
+        fi
+    else
+        echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
+    fi
     if [ -e "$HOME/.ssh/github-rsa" ] ; then
         echo -e "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
     else
@@ -224,8 +231,9 @@ printMenu(){
     fi
     echo -e "\t4) Exit Now!"
     echo -e "\t5) Continue Setup"
+    echo -e " "
     echo "Press ^C, q or 4 if the above system information is not correct or you wish to abort installation"
-    echo " "
+    echo -e " "
     echo "Press press 5, c, or y to proceed"
     read option;
     while [[ $option -gt 12 || ! $(echo $option | grep '^[1-5qQyc]$') ]]
