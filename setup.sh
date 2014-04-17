@@ -305,6 +305,8 @@ curl https://raw.github.com/creationix/nvm/master/install.sh | sh
 source $HOME/.nvm/nvm.sh
 nvm install $nvmuse
 nvm use $nvmuse
+nvm alias default $nvmuse
+
 # Set npm to local version and then use sudo for global installation
 npm="$HOME/.nvm/$nvmuse/bin/npm"
 
