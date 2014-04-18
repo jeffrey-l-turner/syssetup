@@ -229,7 +229,7 @@ printMenu(){
     if [ "${nodeInstalled}" = "true" ] ; then
          echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
-            echo "and node already globally installed at: /usr/local/node"
+            echo "and node already globally installed at: /usr/local/bin/node"
         else
             echo "node is not globally installed. To globally install during setup, press 4 below"
         fi
