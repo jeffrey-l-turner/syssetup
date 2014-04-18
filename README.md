@@ -18,7 +18,7 @@ Alternatively, you may also use a non-interactive setup using the defaults:
 
 `curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
 
-These defaults will not install editors, and primarily designed for running a headless Node.js system.
+These defaults for non-interactive setup will not install editors, and are primarily designed for running a headless Node.js system.
 
 After running interactive setup, you may optionally generate Heroku and GitHub keys. Place the public keys
 (~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
