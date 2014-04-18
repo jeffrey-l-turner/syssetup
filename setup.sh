@@ -317,7 +317,7 @@ sudo $npm install -g jshint
 sudo $npm install -g jslint
 sudo $npm install -g js-beautify 
 # If debian/ubuntu must do a global install:
-if [ $"{DistroBasedOn}" == "Debian" ]; then
+if [ $"{DistroBasedOn}" == "debian" ]; then
     sudo install repl.history
 else
     $npm install repl.history
