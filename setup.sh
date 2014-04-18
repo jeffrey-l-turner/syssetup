@@ -355,13 +355,7 @@ echo "use sudo password for following if prompted"
 sudo $npm install -g jshint
 sudo $npm install -g jslint
 sudo $npm install -g js-beautify 
-# If debian/ubuntu must do a global install:
-if [ "$DistroBasedOn" == "debian" ]; then
-    echo "Executing sudo on repl.history because DistoBasedOn = $DistroBasedOn" 
-    sudo install repl.history
-else
-    $npm install repl.history
-fi
+sudo $npm install repl.history
 
 # Install rlwrap to provide libreadline features with node
 # See: http://nodejs.org/api/repl.html#repl_repl
