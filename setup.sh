@@ -316,7 +316,12 @@ echo "use sudo password for following if prompted"
 sudo $npm install -g jshint
 sudo $npm install -g jslint
 sudo $npm install -g js-beautify 
-$npm install repl.history
+# If debian/ubuntu must do a global install:
+if [ $"{DistroBasedOn}" == "Debian" ]; then
+    sudo install repl.history
+else
+    $npm install repl.history
+fi
 
 # Install rlwrap to provide libreadline features with node
 # See: http://nodejs.org/api/repl.html#repl_repl
