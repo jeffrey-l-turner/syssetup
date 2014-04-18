@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
 nvmuse="v0.10.19"
@@ -50,6 +50,39 @@ cloneDotFiles(){
         fi
     fi
     dotFilesCloned="true"
+}
+
+nvmInstalled="false"
+installNVM (){
+    if [ "$nvmInstalled" == "false" ]; then
+        # Install nvm: node-version manager
+        # https://github.com/creationix/nvm
+        curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+
+        # Load nvm and install latest production node
+        source $HOME/.nvm/nvm.sh
+        nvm install $nvmuse
+        nvm use $nvmuse
+        nvm alias default $nvmuse
+        nvmInstalled="true"
+    else
+        nvmInstalled="true"
+    fi
+}
+
+if [ -e `which node` ]; then
+    nodeInstalled="true"
+else
+    nodeInstalled="false"
+fi
+
+# Global installation for node:
+nodeGlobalInstall() {
+    echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
+    echo -e  "enter sudo password if prompted"
+    echo -e " "
+    installNVM
+    n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
 }
 
 
@@ -183,7 +216,7 @@ fi
 printMenu(){
     
     clear
-    echo -e '\n\033[46;69m'"\033[1m    Headless server setup for Node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
+    echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
     echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     echo "OS: $OS"
@@ -193,6 +226,14 @@ printMenu(){
     echo "DistroBasedOn: $DistroBasedOn"
     echo "KERNEL: $KERNEL"
     echo "MACH: $MACH"
+    if [ "${nodeInstalled}" = "true" ] ; then
+         echo "node installed at: " `which node`
+        if [ -e /usr/local/bin/node ] ; then
+            echo "and node already globally installed at: /usr/local/node"
+        else
+            echo "node is not globally installed. To globally install during setup, press 4 below"
+        fi
+    fi
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
     echo "Editor and configuration to be installed: "$editorInstall  
@@ -229,14 +270,19 @@ printMenu(){
     else
         echo -e "\t3) Toggle to install vim instead of emacs "
     fi
-    echo -e "\t4) Exit Now!"
-    echo -e "\t5) Continue Setup"
+    if [ -e /usr/local/bin/node ] ; then
+        echo -e "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
+    else
+        echo -e "\t4) Install node version $nvmuse globally "
+    fi
+    echo -e "\t5) Exit Now!"
+    echo -e "\t6) Continue Setup"
     echo -e " "
-    echo "Press ^C, q or 4 if the above system information is not correct or you wish to abort installation"
+    echo "Press ^C, q or 5 if the above system information is not correct or you wish to abort installation"
     echo -e " "
-    echo "Press press 5, c, or y to proceed"
+    echo "Press press 6, c, or y to proceed"
     read option;
-    while [[ $option -gt 12 || ! $(echo $option | grep '^[1-5qQyc]$') ]]
+    while [[ $option -gt 12 || ! $(echo $option | grep '^[1-6qQyc]$') ]]
     do
         printMenu
     done
@@ -258,12 +304,13 @@ runOption(){
         1) genHeroku;;
         2) genGitHub;;
         3) toggleVimEmacs;;
-        4) exit;;
+        4) nodeGlobalInstall;;
+        5) exit;;
         q) exit;;
         Q) exit;;
         y) setFlags;;
         c) setFlags;;
-        5) setFlags
+        6) setFlags
     esac 
     echo "Press return to continue"
     read x
@@ -297,15 +344,7 @@ fi
 
 installGit  # Git installation now moved to function so that it can be used in clone functions
 
-# Install nvm: node-version manager
-# https://github.com/creationix/nvm
-curl https://raw.github.com/creationix/nvm/master/install.sh | sh
-
-# Load nvm and install latest production node
-source $HOME/.nvm/nvm.sh
-nvm install $nvmuse
-nvm use $nvmuse
-nvm alias default $nvmuse
+installNVM  # nvm installation now moved to function so it can be used for global node install
 
 # Set npm to local version and then use sudo for global installation
 npm="$HOME/.nvm/$nvmuse/bin/npm"
