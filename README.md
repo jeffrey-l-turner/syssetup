@@ -12,11 +12,11 @@ as well as identifying the system parameters prior to invocation.
 
 Run the following from a terminal window on your virtual machine or Mac to interactively setup your system:
 
-`curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
+`curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
 
 Alternatively, you may also use a non-interactive setup using the defaults: 
 
-`curl https://raw.github.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
+`curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh | bash`
 
 These defaults for non-interactive setup will not install editors, and are primarily designed for running a headless Node.js system.
 
