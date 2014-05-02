@@ -57,7 +57,8 @@ installNVM (){
     if [ "$nvmInstalled" == "false" ]; then
         # Install nvm: node-version manager
         # https://github.com/creationix/nvm
-        curl https://raw.github.com/creationix/nvm/master/install.sh | sh
+        # nvm installation has moved:
+        curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | sh
 
         # Load nvm and install latest production node
         source $HOME/.nvm/nvm.sh
