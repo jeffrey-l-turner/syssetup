@@ -3,14 +3,14 @@ syssetup
 
 script to setup a new system
 
-This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, and Fedora instances.
+This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, and Fedora instances. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below.
 
 setup.git
 =========
 This setup script now offers an interactive menu for setup of both ssh keys (for Heroku and Github)
 as well as identifying the system parameters prior to invocation. 
 
-Run the following from a terminal window on your virtual machine or Mac to interactively setup your system:
+Run the following from a terminal window on your virtual machine to interactively setup your system:
 
 `curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
 
