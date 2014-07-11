@@ -199,9 +199,10 @@ toggleVimEmacs(){
 
 shootProfile
 
-# If using Mac OS, then install brew
+# If using Mac OS, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
     ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+    brew install ctags
 fi
 
 # setup ln options for dotfile linking
