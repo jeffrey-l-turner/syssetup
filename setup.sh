@@ -215,7 +215,6 @@ fi
 # Print Menu
 ####################################################################
 printMenu(){
-    
     clear
     echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
     echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
@@ -287,7 +286,7 @@ printMenu(){
     do
         printMenu
     done
-    if [[ "$option" == "5" || "$option" == "c" || "$option" == "y" ]]; then
+    if [[ "$option" == "6" || "$option" == "c" || "$option" == "y" ]]; then
         echo "Starting installation..."
         echo 
         setFlags
