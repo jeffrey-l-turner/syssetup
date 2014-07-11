@@ -5,10 +5,12 @@ script to setup a new system
 
 This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, and Fedora instances. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below.
 
-setup.git
+setup.sh
 =========
 This setup script now offers an interactive menu for setup of both ssh keys (for Heroku and Github)
 as well as identifying the system parameters prior to invocation. 
+
+The script has been updated to suport an angularJS development environment using vim with ctags. The system will automatically re-index ctags when working with git repositories.
 
 Run the following from a terminal window on your virtual machine to interactively setup your system:
 
