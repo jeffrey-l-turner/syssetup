@@ -2,7 +2,7 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.10.19"
+nvmuse="v0.10.24"
 
 # location of dotfiles on Git
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
@@ -14,11 +14,6 @@ vundle="https://github.com/gmarik/vundle.git"
 lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
-
-# If using Mac OS, then install brew
-if [ "${OS}" == "mac" ]; then
-    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-fi
 
 gitInstalled="false"
 installGit() {
@@ -203,6 +198,11 @@ toggleVimEmacs(){
 }
 
 shootProfile
+
+# If using Mac OS, then install brew
+if [ "${OS}" == "mac" ]; then
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+fi
 
 # setup ln options for dotfile linking
 if [ "${OS}" == "mac" ]; then
