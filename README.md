@@ -30,6 +30,7 @@ test by executing: `ssh -vT git@heroku.com`;
 Note: shell request will fail but message will show "Authentication succeeded (publickey)."
 
 Logout of shell and log back in to properly setup environment.
+execute ~/.git_template/config.sh to finish setting up git in the new shell.
 
 
 See also http://github.com/jeffrey-l-turner/dotfiles

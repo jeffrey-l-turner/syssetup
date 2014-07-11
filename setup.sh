@@ -449,4 +449,5 @@ fi
 
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
+echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
 
