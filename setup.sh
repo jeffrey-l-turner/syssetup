@@ -350,11 +350,12 @@ installNVM  # nvm installation now moved to function so it can be used for globa
 # Set npm to local version and then use sudo for global installation
 npm="$HOME/.nvm/$nvmuse/bin/npm"
 
-# Install jshint to allow checking of JS code within emacs and node history (locally)
+# Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
 # http://jshint.com/
 echo "use sudo password for following if prompted"
 sudo $npm install -g jshint
 sudo $npm install -g jslint
+sudo $npm install -g eslint
 sudo $npm install -g js-beautify 
 sudo $npm install repl.history
 
