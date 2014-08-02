@@ -14,7 +14,10 @@ The script has been updated to suport an angularJS development environment using
 
 Run the following from a terminal window on your virtual machine to interactively setup your system:
 
-`curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh`
+```sh
+curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; 
+bash ./setup.sh
+```
 
 Alternatively, you may also use a non-interactive setup using the defaults: 
 
@@ -30,7 +33,11 @@ test by executing: `ssh -vT git@heroku.com`;
 Note: shell request will fail but message will show "Authentication succeeded (publickey)."
 
 Logout of shell and log back in to properly setup environment.
-execute ~/.git_template/config.sh to finish setting up git in the new shell.
 
+Then, execute:
+```sh
+ ~/.git_template/config.sh 
+```
+to finish setting up git for ctagging, etc. in the new shell.
 
 See also http://github.com/jeffrey-l-turner/dotfiles
