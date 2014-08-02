@@ -3,14 +3,14 @@ syssetup
 
 script to setup a new system
 
-This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, and Fedora instances. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below.
+This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, CentOS, and Fedora instances. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below.
 
 setup.sh
 =========
 This setup script now offers an interactive menu for setup of both ssh keys (for Heroku and Github)
 as well as identifying the system parameters prior to invocation. 
 
-The script has been updated to suport an angularJS development environment using vim with ctags. The system will automatically re-index ctags when working with git repositories.
+The script has been updated to suport an AngularJS development environment using vim with ctags and eslint. The scripts will automatically re-index ctags when working with git repositories.
 
 Run the following from a terminal window on your virtual machine to interactively setup your system:
 
@@ -28,8 +28,9 @@ These defaults for non-interactive setup will not install editors, and are prima
 After running interactive setup, you may optionally generate Heroku and GitHub keys. Place the public keys
 (~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
 
-Test by executing: `ssh -T git@github.com`; and/or
-test by executing: `ssh -vT git@heroku.com`; 
+Test by executing: ```sh
+ssh -T git@github.com```; and/or test by executing: ```sh
+ssh -vT git@heroku.com```; 
 Note: shell request will fail but message will show "Authentication succeeded (publickey)."
 
 Logout of shell and log back in to properly setup environment.
