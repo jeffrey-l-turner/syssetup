@@ -15,8 +15,7 @@ The script has been updated to suport an AngularJS development environment using
 Run the following from a terminal window on your virtual machine to interactively setup your system:
 
 ```sh
-curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; 
-bash ./setup.sh
+curl https://raw.githubusercontent.com/jeffrey-l-turner/syssetup/master/setup.sh > ./setup.sh; bash ./setup.sh
 ```
 
 Alternatively, you may also use a non-interactive setup using the defaults: 
