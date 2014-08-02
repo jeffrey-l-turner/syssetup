@@ -31,7 +31,7 @@ After running interactive setup, you may optionally generate Heroku and GitHub k
 Test by executing: ```sh
 ssh -T git@github.com```; and/or test by executing: ```sh
 ssh -vT git@heroku.com
-``` (Note: shell request will fail but message will show "Authentication succeeded (publickey).")
+```\r (__Note: shell request will fail but message will show "Authentication succeeded (publickey)."__)
 
 Logout of shell and log back in to properly setup environment.
 
