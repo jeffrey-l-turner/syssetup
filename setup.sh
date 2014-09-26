@@ -2,7 +2,7 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.10.24"
+nvmuse="v0.10.32"
 
 # location of dotfiles on Git
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
@@ -52,8 +52,9 @@ installNVM (){
     if [ "$nvmInstalled" == "false" ]; then
         # Install nvm: node-version manager
         # https://github.com/creationix/nvm
-        # nvm installation has moved:
-        curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | sh
+        # nvm locations have frequently changed
+        # using v0.17.0 currently from githubusercontent:
+        curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash
 
         # Load nvm and install latest production node
         source $HOME/.nvm/nvm.sh
@@ -78,7 +79,11 @@ nodeGlobalInstall() {
     echo -e  "enter sudo password if prompted"
     echo -e " "
     installNVM
-    n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+    if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
+        brew install node
+    else
+        n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+    fi
 }
 
 
@@ -199,8 +204,19 @@ toggleVimEmacs(){
 
 shootProfile
 
-# If using Mac OS, then install brew & ctags
+# If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
+    if [ -e `which xcode` ]; then
+        echo "xcode version: `xcode-select --version` installed"
+    else
+        echo "xcode command line tools are not installed..." 
+        echo "please install xcode before proceeding" 
+        echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12 )"
+        echo ""
+        echo "Attempting to execute make... please follow instructions to install xcode and re-run $0"
+        make
+        exit 1
+    fi
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     brew install ctags
 fi
