@@ -80,20 +80,23 @@ fi
 
 # Global installation for node:
 nodeGlobalInstall() {
-    echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
-    echo -e  "enter sudo password if prompted"
-    echo -e " "
-    if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
-        installNVM
-        brew install node
-    elif [ "${OS}" == "cygwin" ]; then
-        wget $winNode
-        msi=`echo $winNode | sed -e 's/.*\///'`
-        run misexec /i $msi /quiet
-        rm -f $msi
+    if [ "${OS}" == "cygwin" ]; then
+      wget $winNode
+      msi=`echo $winNode | sed -e 's/.*\///'`
+      echo "running msiexec to install node..."
+      run misexec /i $msi /quiet
+      rm -f $msi
     else
-        installNVM
-        n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+      echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
+      echo -e  "enter sudo password if prompted"
+      echo -e " "
+      if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
+          installNVM
+          brew install node
+      else
+          installNVM
+          n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+      fi
     fi
 }
 
