@@ -10,7 +10,6 @@ gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 # location of vundle on Git
 vundle="https://github.com/gmarik/vundle.git"
  
-
 lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
@@ -92,6 +91,9 @@ nodeGlobalInstall() {
 ####################################################################
 shootProfile(){
     OS=`lowercase \`uname\``
+    if [ "`echo ${OS} | cut -b 1-6`" -eq "cygwin" ] # check for Cygwin on Windows
+        OS=`lowercase \`uname -o\``
+    fi
     KERNEL=`uname -r`
     MACH=`uname -m`
 
