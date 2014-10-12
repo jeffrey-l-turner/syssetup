@@ -91,8 +91,9 @@ nodeGlobalInstall() {
 ####################################################################
 shootProfile(){
     OS=`lowercase \`uname\``
-    if [ "`echo ${OS} | cut -b 1-6`" -eq "cygwin" ] # check for Cygwin on Windows
-        OS=`lowercase \`uname -o\``
+    WOS=`echo "${OS}" | cut -b 1-6`
+    if [ "${WOS}" = "cygwin" ] ; then # check for Cygwin on Windows
+        OS=`lowercase \`uname -o\`
     fi
     KERNEL=`uname -r`
     MACH=`uname -m`
