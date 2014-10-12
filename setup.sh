@@ -67,7 +67,7 @@ installNVM (){
     fi
 }
 
-if [ -e `which node` ]; then
+if [ -e "`which node`" ]; then
     nodeInstalled="true"
 else
     nodeInstalled="false"
@@ -103,7 +103,11 @@ shootProfile(){
         AppInstall="brew "
         DIST="Apple OS X"
     else if [ "${OS}" == "cygwin*" ]; then
-        echo "on Windows CYGWIN!!!"
+        DIST="Windows POSIX"
+        REV=`uname -r`
+        PSEUDONAME="Cygwin"
+        DistroBasedOn='POSIX'
+        AppInstall="apt-cyg "
     fi
         OS=`uname`
         if [ "${OS}" = "Linux" ] ; then
@@ -208,7 +212,7 @@ shootProfile
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    if [ -e `which xcode` ]; then
+    if [ -e "`which xcode-select`" ]; then
         echo "xcode version: `xcode-select --version` installed"
     else
         echo "xcode command line tools are not installed..." 
@@ -245,11 +249,13 @@ printMenu(){
     echo "DistroBasedOn: $DistroBasedOn"
     echo "KERNEL: $KERNEL"
     echo "MACH: $MACH"
-    if [ "${nodeInstalled}" = "true" ] ; then
-         echo "node installed at: " `which node`
+    if [ "${nodeInstalled}" = "true" ] ; then 
+        echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
-        else
+        else if [ "${OS}" == 'cygwin'] ; then
+            echo "node globally installed at: " `which node`
+        fi
             echo "node is not globally installed. To globally install during setup, press 4 below"
         fi
     fi
