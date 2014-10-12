@@ -2,7 +2,9 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.10.32"
+nvmuse="v0.10.32" 
+# version of node to use on Windows/Cygwin
+winNode="http://nodejs.org/dist/v0.10.32/x64/node-v0.10.32-x64.msi"
 
 # location of dotfiles on Git
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
@@ -19,9 +21,10 @@ gitInstalled="false"
 installGit() {
     if [ "$gitInstalled" == "false" ]; then
        if [ "${OS}" == "mac" ]; then
-           $AppInstall install git
+          $AppInstall install git
        elif [ "${OS}" == "cygwin" ]; then
-           echo "git installed via Cygwin"
+          echo "installing git via Cygwin"
+          $AppInstall install git
        else
           $AppInstall install -y git-core 
        fi
@@ -83,6 +86,11 @@ nodeGlobalInstall() {
     installNVM
     if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
         brew install node
+    elif [ "${OS}" == "cygwin" ]; then
+        wget $winNode
+        msi=`echo $winNode | sed -e 's/.*\///'`
+        run misexec /i $msi /quiet
+        rm -f $msi
     else
         n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
     fi
@@ -256,13 +264,15 @@ printMenu(){
         echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
+            echo "Will use node version: $nvmuse" 
         elif [ "${OS}" == 'cygwin' ] ; then
             echo "node globally installed at: " `which node`
+            echo "Will use node from: ${winNode}"
         else
             echo "node is not globally installed. To globally install during setup, press 4 below"
+            echo "Will use node version: $nvmuse" 
         fi
     fi
-    echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
     echo "Editor and configuration to be installed: "$editorInstall  
     if [ "${herokuKey}" = "true" ] ; then
@@ -372,23 +382,32 @@ fi
 
 installGit  # Git installation now moved to function so that it can be used in clone functions
 
-installNVM  # nvm installation now moved to function so it can be used for global node install
+if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages on *nix else specific pkgs for cygwin
+  installNVM  # nvm installation now moved to function so it can be used for global node install
 
-# Set npm to local version and then use sudo for global installation
-npm="$HOME/.nvm/$nvmuse/bin/npm"
+  # Set npm to local version and then use sudo for global installation
+  npm="$HOME/.nvm/$nvmuse/bin/npm"
+  
+  # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
+  # http://jshint.com/
+  echo "use sudo password for following if prompted"
+  sudo $npm install -g jshint
+  sudo $npm install -g jslint
+  sudo $npm install -g eslint
+  sudo $npm install -g js-beautify 
+  sudo $npm install repl.history
 
-# Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
-# http://jshint.com/
-echo "use sudo password for following if prompted"
-sudo $npm install -g jshint
-sudo $npm install -g jslint
-sudo $npm install -g eslint
-sudo $npm install -g js-beautify 
-sudo $npm install repl.history
-
-# Install rlwrap to provide libreadline features with node
-# See: http://nodejs.org/api/repl.html#repl_repl
-$AppInstall install -y rlwrap
+  # Install rlwrap to provide libreadline features with node
+  # See: http://nodejs.org/api/repl.html#repl_repl
+  $AppInstall install -y rlwrap
+else # install node globally via binary
+  $AppInstall install rlwrap
+  # install node via wget and Windows interactive install
+  echo "Installing node via wget and windows installer"
+  echo "Machine may need to be restarted after installation"
+  $npm install eslint -g
+  $npm install js-beautify -g
+fi
 
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
 if [ "${OS}" == "mac" ]; then
