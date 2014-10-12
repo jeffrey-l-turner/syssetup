@@ -314,7 +314,11 @@ printMenu(){
     if [ -e /usr/local/bin/node ] ; then
         echo -e "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
     else
-        echo -e "\t4) Install node version $nvmuse globally "
+        if [ "${OS}" == 'cygwin' ] ; then
+            echo -e "\t4) Install node from ${winNode} for use globally "
+        else
+            echo -e "\t4) Install node version $nvmuse globally "
+        fi
     fi
     echo -e "\t5) Exit Now!"
     echo -e "\t6) Continue Setup"
