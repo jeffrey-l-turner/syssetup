@@ -254,9 +254,9 @@ printMenu(){
         echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
-        else if [ "${OS}" == 'cygwin' ] ; then
+        elif [ "${OS}" == 'cygwin' ] ; then
             echo "node globally installed at: " `which node`
-        fi
+        else
             echo "node is not globally installed. To globally install during setup, press 4 below"
         fi
     fi
