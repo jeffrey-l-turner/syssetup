@@ -267,10 +267,13 @@ printMenu(){
             echo "Will use node version: $nvmuse" 
         elif [ "${OS}" == 'cygwin' ] ; then
             echo "node globally installed at: " `which node`
-            echo "Will use node from: ${winNode}"
         else
             echo "node is not globally installed. To globally install during setup, press 4 below"
             echo "Will use node version: $nvmuse" 
+        fi
+    else
+        if [ "${OS}" == 'cygwin' ] ; then
+            echo "Will use node from: ${winNode}"
         fi
     fi
     echo "Application Installer: $AppInstall"  
