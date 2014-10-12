@@ -103,6 +103,7 @@ shootProfile(){
         AppInstall="brew "
         DIST="Apple OS X"
     elif [ `echo "${OS}" | cut -b 1-6` == "cygwin" ]; then
+        OS="cygwin"
         DIST="Windows POSIX"
         REV=`uname -r`
         PSEUDONAME=`uname`
