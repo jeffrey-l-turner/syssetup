@@ -103,11 +103,15 @@ shootProfile(){
         REV=`uname -r`
         PSEUDONAME="Darwin"
         DistroBasedOn='BSD'
+        DIST='BSD derivative'
         AppInstall="brew "
-        llopts=" "
-    else
+    else if [ `echo "${OS}" | cut -b 1-6` == "cygwin"  ]; then
+        echo on WIDNOWS!!!!
+        OS="cygwin"
+        AppInstall="apt-cyg "
+    fi
         OS=`uname`
-        if [ "${OS}" = "Linux" ] ; then
+        if [ "${OS}" == "Linux" ] ; then
             if [ -f /etc/redhat-release ] ; then
                 DistroBasedOn='RedHat'
                 DIST=`cat /etc/redhat-release |sed s/\ release.*//`
@@ -138,16 +142,15 @@ shootProfile(){
             fi
             OS=`lowercase $OS`
             DistroBasedOn=`lowercase $DistroBasedOn`
-            readonly OS
-            readonly DIST
-            readonly DistroBasedOn
-            readonly PSEUDONAME
-            readonly REV
-            readonly KERNEL
-            readonly MACH
-        fi
-
-    fi
+        fi 
+    fi 
+    readonly OS 
+    readonly DIST 
+    readonly DistroBasedOn 
+    readonly PSEUDONAME 
+    readonly REV 
+    readonly KERNEL 
+    readonly MACH
 }
 
 
@@ -246,7 +249,7 @@ printMenu(){
     echo "DistroBasedOn: $DistroBasedOn"
     echo "KERNEL: $KERNEL"
     echo "MACH: $MACH"
-    if [ "${nodeInstalled}" = "true" ] ; then
+    if [ "${nodeInstalled}" == "true" ] ; then
          echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
@@ -257,7 +260,7 @@ printMenu(){
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
     echo "Editor and configuration to be installed: "$editorInstall  
-    if [ "${herokuKey}" = "true" ] ; then
+    if [ "${herokuKey}" == "true" ] ; then
          echo "Heroku key has been created and Heroku toolbelt will be installed. "
     fi
     if [ "${githubKey}" == "true" ] ; then
@@ -274,7 +277,7 @@ printMenu(){
     echo " "
     if [ -e "$HOME/.ssh/heroku-rsa" ] ; then
         echo -e "\t1) Heroku Key installed at ~/.ssh/heroku-rsa. Press 1 to overwrite existing key and install toolbelt."
-        if [ "${herokuKey}" = "true" ] ; then
+        if [ "${herokuKey}" == "true" ] ; then
             echo -e "Heroku Toolbelt will be (re-)installed."
         fi
     else
@@ -285,7 +288,7 @@ printMenu(){
     else
         echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
     fi
-    if [ "${editorInstall}" = "vim" ] ; then
+    if [ "${editorInstall}" == "vim" ] ; then
         echo -e "\t3) Toggle to install emacs instead of vim "
     else
         echo -e "\t3) Toggle to install vim instead of emacs "
