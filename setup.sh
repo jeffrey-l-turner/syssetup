@@ -72,7 +72,8 @@ installNVM (){
     fi
 }
 
-if [ -e "`which node`" ]; then
+which node > /dev/null 2>&1 # for Cygwin compatibility
+if [ $? -eq 0 ]; then
     nodeInstalled="true"
 else
     nodeInstalled="false"
@@ -83,9 +84,10 @@ nodeGlobalInstall() {
     if [ "${OS}" == "cygwin" ]; then
       wget $winNode
       msi=`echo $winNode | sed -e 's/.*\///'`
-      echo "running msiexec to install node..."
-      run misexec /i $msi /quiet
-      rm -f $msi
+      mv ${msi} /tmp
+      echo "running msiexec.exe to install: ${msi}"
+      run misexec.exe /i /tmp/$msi 
+      #rm -f ${msi} 
     else
       echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
       echo -e  "enter sudo password if prompted"
