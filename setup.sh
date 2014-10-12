@@ -315,9 +315,9 @@ printMenu(){
         echo -e "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
     else
         if [ "${OS}" == 'cygwin' ] ; then
-            echo -e "\t4) Install node from ${winNode} for use globally "
+            echo -e "\t4) Install node from ${winNode} for global use" 
         else
-            echo -e "\t4) Install node version $nvmuse globally "
+            echo -e "\t4) Install node version ${nvmuse} globally "
         fi
     fi
     echo -e "\t5) Exit Now!"
@@ -384,12 +384,12 @@ else
 fi
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
-# for headless setup.  Now modified to support MacOS, RHEL and other Linux systems.
+# for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
 
 
 installGit  # Git installation now moved to function so that it can be used in clone functions
 
-if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages on *nix else specific pkgs for cygwin
+if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix 
   installNVM  # nvm installation now moved to function so it can be used for global node install
 
   # Set npm to local version and then use sudo for global installation
@@ -408,10 +408,8 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages on *nix else 
   # See: http://nodejs.org/api/repl.html#repl_repl
   $AppInstall install -y rlwrap
 else # install node globally via binary
+  nodeGlobalInstall
   $AppInstall install rlwrap
-  # install node via wget and Windows interactive install
-  echo "Installing node via wget and windows installer"
-  echo "Machine may need to be restarted after installation"
   $npm install eslint -g
   $npm install js-beautify -g
 fi
