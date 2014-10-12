@@ -18,11 +18,13 @@ lowercase(){
 gitInstalled="false"
 installGit() {
     if [ "$gitInstalled" == "false" ]; then
-        if [ "${OS}" == "mac" ]; then
-            $AppInstall install git
-        else
-        $AppInstall install -y git-core 
-        fi
+       if [ "${OS}" == "mac" ]; then
+           $AppInstall install git
+       elif [ "${OS}" == "cygwin" ]; then
+           echo "git installed via Cygwin"
+       else
+          $AppInstall install -y git-core 
+       fi
     fi
     gitInstalled="true"
 }
