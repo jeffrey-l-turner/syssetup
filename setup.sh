@@ -102,13 +102,13 @@ shootProfile(){
         DistroBasedOn='BSD'
         AppInstall="brew "
         DIST="Apple OS X"
-    else if [ "${OS}" == "cygwin*" ]; then
+    elif [ `echo "${OS}" | cut -b 1-6` == "cygwin" ]; then
         DIST="Windows POSIX"
         REV=`uname -r`
-        PSEUDONAME="Cygwin"
+        PSEUDONAME=`uname`
         DistroBasedOn='POSIX'
         AppInstall="apt-cyg "
-    fi
+    else
         OS=`uname`
         if [ "${OS}" = "Linux" ] ; then
             if [ -f /etc/redhat-release ] ; then
@@ -253,7 +253,7 @@ printMenu(){
         echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
-        else if [ "${OS}" == 'cygwin'] ; then
+        else if [ "${OS}" == 'cygwin' ] ; then
             echo "node globally installed at: " `which node`
         fi
             echo "node is not globally installed. To globally install during setup, press 4 below"
