@@ -86,7 +86,7 @@ nodeGlobalInstall() {
       msi=`echo $winNode | sed -e 's/.*\///'`
       mv ${msi} /tmp
       echo "running msiexec.exe to install: ${msi}"
-      run msiexec.exe /i /tmp/$msi 
+      run msiexec.exe /i `cygpath -d /tmp/$msi` 
       echo "restart system prior to installing rest of $0"
       #rm -f ${msi} 
     else
