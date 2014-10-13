@@ -3,7 +3,7 @@ syssetup
 
 script to setup a new system
 
-This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, CentOS, Fedora and Cygwin systems. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below. If installing on Windows/Cygwing make sure the base Cygwin system has been installed first (cygwin.com/install.html).
+This is a script customized cloned from github.com:startup-class/setup.git for Mac OS as well as Ubuntu, Redhat, CentOS, Fedora and Cygwin systems. If you intend to run this on a Mac, install the Xcode command line tools prior to executing the curl commands, below. If installing on Windows/Cygwin make sure the base Cygwin system has been installed first (cygwin.com/install.html).
 
 setup.sh
 =========
