@@ -2,9 +2,9 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.10.32" 
-# version of node to use on Windows/Cygwin
-winNode="http://nodejs.org/dist/v0.10.32/x64/node-v0.10.32-x64.msi"
+nvmuse="v0.10.30" 
+# binary of node to use on Windows/Cygwin
+winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
 # location of dotfiles on Git
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
