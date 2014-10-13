@@ -86,7 +86,8 @@ nodeGlobalInstall() {
       msi=`echo $winNode | sed -e 's/.*\///'`
       mv ${msi} /tmp
       echo "running msiexec.exe to install: ${msi}"
-      run misexec.exe /i /tmp/$msi 
+      run msiexec.exe /i /tmp/$msi 
+      echo "restart system prior to installing rest of $0"
       #rm -f ${msi} 
     else
       echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
@@ -271,15 +272,18 @@ printMenu(){
         if [ -e /usr/local/bin/node ] ; then
             echo "and node already globally installed at: /usr/local/bin/node"
             echo "Will use node version: $nvmuse" 
-        elif [ "${OS}" == 'cygwin' ] ; then
-            echo "node globally installed at: " `which node`
+        elif [ "${OS}" == "cygwin" ] ; then
+	    echo -e "nvm will not be installed on Windows/Cygwin"
+            echo -e "node version:" `node --version`
+            echo -e "is currently installed on system"
         else
             echo "node is not globally installed. To globally install during setup, press 4 below"
             echo "Will use node version: $nvmuse" 
         fi
     else
         if [ "${OS}" == 'cygwin' ] ; then
-            echo "Will use node from: ${winNode}"
+            echo "node is not installed on Windows. To globally install during setup, press 4 below"
+            echo "Option 4 will use node from: ${winNode}"
         fi
     fi
     echo "Application Installer: $AppInstall"  
