@@ -397,10 +397,10 @@ fi
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
 
 
-installGit  # Git installation now moved to function so that it can be used in clone functions
 
 if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix 
-  installNVM  # nvm installation now moved to function so it can be used for global node install
+  installGit  
+  installNVM 
 
   # Set npm to local version and then use sudo for global installation
   npm="$HOME/.nvm/$nvmuse/bin/npm"
@@ -418,7 +418,9 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   # See: http://nodejs.org/api/repl.html#repl_repl
   $AppInstall install -y rlwrap
 else # install node globally via binary
-  nodeGlobalInstall
+  if [ nodeInstalled == "false" ] ; then
+    nodeGlobalInstall
+  fi
   # install apt-cygwin for individual cygwin commands
   which $AppInstall > /dev/null 2>&1
   if [ $? -eq 1 ] ; then
