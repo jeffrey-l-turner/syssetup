@@ -2,7 +2,7 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.10.30" 
+nvmuse="v0.11.12" 
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -419,6 +419,14 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   $AppInstall install -y rlwrap
 else # install node globally via binary
   nodeGlobalInstall
+  # install apt-cygwin for individual cygwin commands
+  which $AppInstall > /dev/null 2>&1
+  if [ $? -eq 1 ] ; then
+    echo -e "installing apt-cyg from GitHub"
+    wget https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
+    mv apt-cyg /usr/bin
+    chmod +x /usr/bin/apt-cyg
+  fi
   $AppInstall install rlwrap
   $npm install eslint -g
   $npm install js-beautify -g
