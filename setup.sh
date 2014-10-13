@@ -492,7 +492,8 @@ cat dotfiles/.bashrc_custom >> $HOME/.bashrc_custom
 # Select whether to link vim or emacs dotfiles:
 if [ "${editorInstall}" == "emacs" ] ; then
         ln -sf dotfiles/.emacs.d .  
-elif [ "${editorInstall}" == "vim"  && "${OS}" != "cygwin" ] ; then 
+elif [ "${editorInstall}" == "vim" ] ; then
+    if [ "${OS}" != "cygwin" ] ; then 
         cp -f dotfiles/.vimrc $HOME
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
@@ -504,6 +505,9 @@ elif [ "${editorInstall}" == "vim"  && "${OS}" != "cygwin" ] ; then
         vim +PluginInstall +qall
         vim +BundleInstall +qall
         echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
+    else
+        echo -e "not installing VIM bundles on Cygwin..."
+    fi
 fi
 
 #If using Mac, copy terminal settings files over to home as well
