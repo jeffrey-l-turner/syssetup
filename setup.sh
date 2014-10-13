@@ -2,7 +2,7 @@
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.11.12" 
+nvmuse="v0.10.32" 
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -418,6 +418,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   # See: http://nodejs.org/api/repl.html#repl_repl
   $AppInstall install -y rlwrap
 else # install node globally via binary
+  npm="npm"
   if [ nodeInstalled == "false" ] ; then
     nodeGlobalInstall
   fi
@@ -440,6 +441,8 @@ if [ "${OS}" == "mac" ]; then
 elif [ "${DistroBasedOn}" == "redhat" ]; then
     echo "Must manually install MongoDB on RHEL"
     echo "       Mongo DB not installed!!"
+elif [ "${OS}" == "cygwin" ] ; then
+	echo not installing Mongo from command line
 else
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
@@ -462,7 +465,8 @@ if [ "${editorInstall}" == "emacs" ] ; then
         $AppInstall update
         $AppInstall install -y emacs24 emacs24-el emacs24-common-non-dfsg
     fi
-else
+
+elif [ "${OS}" != "cygwin" ] ; then
 # Install VIM configuration files including vundle and colorschemes
     # These use configuration specified in dotfiles/.vimrc:
     if [ -d $HOME/.vim/bundle ]; then
@@ -487,8 +491,8 @@ cat dotfiles/.bashrc_custom >> $HOME/.bashrc_custom
 
 # Select whether to link vim or emacs dotfiles:
 if [ "${editorInstall}" == "emacs" ] ; then
-        ln -sf dotfiles/.emacs.d .
-   elif [ "${editorInstall}" == "vim" ];then 
+        ln -sf dotfiles/.emacs.d .  
+elif [ "${editorInstall}" == "vim"  && "${OS}" != "cygwin" ] ; then 
         cp -f dotfiles/.vimrc $HOME
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
