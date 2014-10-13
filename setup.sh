@@ -126,6 +126,7 @@ shootProfile(){
         PSEUDONAME=`uname`
         DistroBasedOn='POSIX'
         AppInstall="apt-cyg "
+        gitInstalled="true"
     else
         OS=`uname`
         if [ "${OS}" = "Linux" ] ; then
