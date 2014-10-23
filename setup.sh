@@ -427,8 +427,7 @@ else # install node globally via binary
   which $AppInstall > /dev/null 2>&1
   if [ $? -eq 1 ] ; then
     echo -e "installing apt-cyg from GitHub"
-    wget https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg
-    mv apt-cyg /usr/bin
+    curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg /usr/bin
     chmod +x /usr/bin/apt-cyg
   fi
   $AppInstall install rlwrap
@@ -444,6 +443,7 @@ elif [ "${DistroBasedOn}" == "redhat" ]; then
     echo "       Mongo DB not installed!!"
 elif [ "${OS}" == "cygwin" ] ; then
 	echo not installing Mongo from command line
+	echo Use Windows Mongo installation (http://www.mongodb.org/downloads)
 else
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
