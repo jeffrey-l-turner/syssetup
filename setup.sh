@@ -427,7 +427,7 @@ else # install node globally via binary
   which $AppInstall > /dev/null 2>&1
   if [ $? -eq 1 ] ; then
     echo -e "installing apt-cyg from GitHub"
-    curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > apt-cyg /usr/bin
+    curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
     chmod +x /usr/bin/apt-cyg
   fi
   $AppInstall install rlwrap
