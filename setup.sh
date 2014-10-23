@@ -7,6 +7,8 @@ nvmuse="v0.10.32"
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
 # location of dotfiles on Git
+# not using git ssh key to insure easy copy without adding key
+# gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
@@ -521,6 +523,12 @@ if [ "${OS}" == "mac" ]; then
 else
     rm -rf dotfiles/term_settings/
 fi 
+
+#Copy over Chrome debugger environment for MAC usage
+if [ "${OS}" == "mac" ]; then
+    echo 'export CHROME_BIN=/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary' >> ~/.bashrc_custom
+    echo 'DebugBrowser="${CHROME_BIN}"'  >> ~/.bashrc_custom
+fi
 
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
 #Install wget and use different install if Mac OS:
