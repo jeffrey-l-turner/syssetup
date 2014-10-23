@@ -443,7 +443,7 @@ elif [ "${DistroBasedOn}" == "redhat" ]; then
     echo "       Mongo DB not installed!!"
 elif [ "${OS}" == "cygwin" ] ; then
 	echo not installing Mongo from command line
-	echo Use Windows Mongo installation (http://www.mongodb.org/downloads)
+	echo -e 'Use Windows Mongo installation (http://www.mongodb.org/downloads)'
 else
     sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
     echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
@@ -508,6 +508,9 @@ elif [ "${editorInstall}" == "vim" ] ; then
         echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
     else
         echo -e "not installing VIM bundles on Cygwin..."
+        # add Cygwin specifics to customized bashrc 
+        echo "export TERM=cygwin" >> ~/.bashrc_custom
+        echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
     fi
 fi
 
@@ -515,7 +518,9 @@ fi
 if [ "${OS}" == "mac" ]; then
     mkdir -p $HOME/.term_settings
     ln $lnopts dotfiles/term_settings/* $HOME/.term_settings
-fi
+else
+    rm -rf dotfiles/term_settings/
+fi 
 
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
 #Install wget and use different install if Mac OS:
