@@ -1,4 +1,54 @@
 #!/bin/bash
+# Script to setup headless node system as general shell 
+# on Unix and Cygwin systems
+#########################################################
+#   Script Requirements
+#
+#   Programs:
+#	curl
+#	sed
+#	tail
+#	basename
+#	rm
+#	mv
+#	wc
+#	cat
+#########################################################
+ 
+#########################################################
+# setup some useful error handling functions
+#########################################################
+ 
+usage() {
+ 	echo `basename $0`: ERROR: $* 1>&2
+        echo usage: './'`basename $0` ' (for interactive mode) '  1>&2
+        echo "cat `basename $0` | /bin/bash <or other sh-compatible shell> (for non-interactive mode)" 1>&2
+ 	exit 1
+}
+ 
+cleanup() {
+    echo -e "cleaning up..."
+}
+error() {
+ 	cleanup
+ 	echo `basename $0`: ERROR: $* 1>&2
+ 	echo "shuting down... internal error or unable to connect to Internet" 1>&2
+ 	exit 2
+}
+
+interrupt () {
+ 	cleanup
+ 	echo `basename $0`: INTERRUPTED: $* 1>&2
+ 	echo "Cleaning up... removed files" 1>&2
+ 	exit 2
+}
+ 
+trap error TERM 
+trap interrupt INT  
+ 
+if  [ "$#" -ne 0 ]; then
+    usage
+fi
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
