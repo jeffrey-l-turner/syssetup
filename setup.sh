@@ -50,6 +50,19 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
+#########################################################
+# setup colors for output
+#########################################################
+ 
+black() { echo -e "$(tput setaf 0)$*$(tput setaf 9)"; }
+red() { echo -e "$(tput setaf 1)$*$(tput setaf 9)"; }
+green() { echo -e "$(tput setaf 2)$*$(tput setaf 9)"; }
+yellow() { echo -e "$(tput setaf 3)$*$(tput setaf 9)"; }
+blue() { echo -e "$(tput setaf 4)$*$(tput setaf 9)"; }
+magenta() { echo -e "$(tput setaf 5)$*$(tput setaf 9)"; }
+cyan() { echo -e "$(tput setaf 6)$*$(tput setaf 9)"; }
+white() { echo -e "$(tput setaf 7)$*$(tput setaf 9)"; }
+
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
 nvmuse="v0.10.32" 
@@ -313,43 +326,43 @@ printMenu(){
     echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
     echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
-    echo "OS: $OS"
-    echo "DIST: $DIST"
-    echo "PSEUDONAME: $PSEUDONAME"
-    echo "REV: $REV"
-    echo "DistroBasedOn: $DistroBasedOn"
-    echo "KERNEL: $KERNEL"
-    echo "MACH: $MACH"
+    magenta "OS: $OS"
+    magenta "DIST: $DIST"
+    cyan "PSEUDONAME: $PSEUDONAME"
+    cyan "REV: $REV"
+    cyan "DistroBasedOn: $DistroBasedOn"
+    cyan "KERNEL: $KERNEL"
+    cyan "MACH: $MACH"
     if [ "${nodeInstalled}" = "true" ] ; then 
         echo "node installed at: " `which node`
         if [ -e /usr/local/bin/node ] ; then
-            echo "and node already globally installed at: /usr/local/bin/node"
-            echo "Will use node version: $nvmuse" 
+            cyan "and node already globally installed at: /usr/local/bin/node"
+            cyan "Will use node version: $nvmuse" 
         elif [ "${OS}" == "cygwin" ] ; then
-	    echo -e "nvm will not be installed on Windows/Cygwin"
-            echo -e "node version:" `node --version`
-            echo -e "is currently installed on system"
+	    cyan "nvm will not be installed on Windows/Cygwin"
+            cyan  "node version:" `node --version`
+            cyan  "is currently installed on system"
         else
-            echo "node is not globally installed. To globally install during setup, press 4 below"
-            echo "Will use node version: $nvmuse" 
+            cyan "node is not globally installed. To globally install during setup, press 4 below"
+            cyan "Will use node version: $nvmuse" 
         fi
     else
         if [ "${OS}" == 'cygwin' ] ; then
-            echo "node is not installed on Windows. To globally install during setup, press 4 below"
-            echo "Option 4 will use node from: ${winNode}"
+            red "node is not installed on Windows. To globally install during setup, press 4 below"
+            red "Option 4 will use node from: ${winNode}"
         fi
     fi
-    echo "Application Installer: $AppInstall"  
-    echo "Editor and configuration to be installed: "$editorInstall  
+    green "Application Installer: $AppInstall"  
+    green "Editor and configuration to be installed: "$editorInstall  
     if [ "${herokuKey}" = "true" ] ; then
-         echo "Heroku key has been created and Heroku toolbelt will be installed. "
+         green "Heroku key has been created and Heroku toolbelt will be installed. "
     fi
     if [ "${githubKey}" == "true" ] ; then
-        echo "GitHub key has been created and placed in ~/.ssh/github.rsa"
+        green "GitHub key has been created and placed in ~/.ssh/github.rsa"
     fi
     if [ "${OS}" == "mac" ]; then
-        echo -e '\n\033[43;35m'"Mac OS users should note that this installation script relies on the use of Homebrew and may conflict"
-        echo -e "                                      with use of Macports or Fink!                                  \033[0m\n"
+        echo -e '\n\033[43;30m'" Mac OS users should note that this installation script relies on the use of Homebrew and may conflict "
+        echo -e  "                                       with use of Macports or Fink!                                   \033[0m\n"
     fi
     echo " "
     echo "=============================================================================================================="
@@ -357,38 +370,38 @@ printMenu(){
     echo "=============================================================================================================="
     echo " "
     if [ -e "$HOME/.ssh/heroku-rsa" ] ; then
-        echo -e "\t1) Heroku Key installed at ~/.ssh/heroku-rsa. Press 1 to overwrite existing key and install toolbelt."
+        yellow "\t1) Heroku Key installed at ~/.ssh/heroku-rsa. Press 1 to overwrite existing key and install toolbelt."
         if [ "${herokuKey}" = "true" ] ; then
-            echo -e "Heroku Toolbelt will be (re-)installed."
+            white "Heroku Toolbelt will be (re-)installed."
         fi
     else
-        echo -e "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
+        white "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
     fi
     if [ -e "$HOME/.ssh/github-rsa" ] ; then
-        echo -e "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
+        yellow "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
     else
-        echo -e "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
+        white "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
     fi
     if [ "${editorInstall}" = "vim" ] ; then
-        echo -e "\t3) Toggle to install emacs instead of vim "
+        white "\t3) Toggle to install emacs instead of vim "
     else
-        echo -e "\t3) Toggle to install vim instead of emacs "
+        white "\t3) Toggle to install vim instead of emacs "
     fi
     if [ -e /usr/local/bin/node ] ; then
-        echo -e "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
+        cyan "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
     else
         if [ "${OS}" == 'cygwin' ] ; then
-            echo -e "\t4) Install node from ${winNode} for global use" 
+            cyan "\t4) Install node from ${winNode} for global use" 
         else
-            echo -e "\t4) Install node version ${nvmuse} globally "
+            cyan "\t4) Install node version ${nvmuse} globally "
         fi
     fi
-    echo -e "\t5) Exit Now!"
-    echo -e "\t6) Continue Setup"
+    red "\t5) Exit Now!"
+    green "\t6) Continue Setup"
     echo -e " "
-    echo "Press ^C, q or 5 if the above system information is not correct or you wish to abort installation"
-    echo -e " "
-    echo "Press press 6, c, or y to proceed"
+    red "Press ^C, q or 5 if the above system information is not correct or you wish to abort installation"
+    white  "------------------------------------------------------------------------------------------------- "
+    green "Press press 6, c, or y to proceed"
     read option;
     while [[ $option -gt 12 || ! $(echo $option | grep '^[1-6qQyc]$') ]]
     do
@@ -432,7 +445,7 @@ if [[ $? -eq 0 ]] ; then
     echo "Interactive mode..."
     printMenu
 else
-    echo "non-interactive installation -- will use defaults without any editor setup"
+    red "non-interactive installation -- will use defaults without any editor setup"
     lnopts="-sf " # force linking to overwrite existing files
     editorInstall="none" # do not load editor configs
     echo "OS: $OS"
