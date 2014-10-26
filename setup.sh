@@ -347,8 +347,8 @@ printMenu(){
             cyan "Will use node version: $nvmuse" 
         elif [ "${OS}" == "cygwin" ] ; then
 	    cyan "nvm will not be installed on Windows/Cygwin"
-            cyan  "node version:" `node --version`
-            cyan  "is currently installed on system"
+            cyan  "node version:" `node --version` 
+            cyan  "globally installed on system"
         else
             cyan "node is not globally installed. To globally install during setup, press 4 below"
             cyan "Will use node version: $nvmuse" 
