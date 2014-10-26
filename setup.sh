@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to setup headless node system as general shell 
-# on Unix and Cygwin systems
+# on Linux/Unix and Cygwin systems
 #########################################################
 #   Script Requirements
 #
@@ -72,11 +72,18 @@ winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
 # gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
-gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
+gitdotfiles="git://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
 vundle="https://github.com/gmarik/vundle.git"
+
+# location of pathogent specific plugins (using generally) 
+commandt="git://git.wincent.com/command-t.git bundle/command-t" 
+libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
+#########################################################################
+# ruby location for windows: http://rubyinstaller.org/downloads/archives
+#########################################################################
 
 lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
@@ -561,6 +568,14 @@ if [ "${editorInstall}" == "emacs" ] ; then
 elif [ "${editorInstall}" == "vim" ] ; then
     if [ "${OS}" != "cygwin" ] ; then 
         cp -f dotfiles/.vimrc $HOME
+
+    # setup pathogen specific installs by using git clones
+        cd ~/.vim 
+        git submodule add "${commandt}" bundle/command-t 
+        git submodule init
+        yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/`` \& use git pull to update"
+        cd ~
+
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
         echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
@@ -570,7 +585,6 @@ elif [ "${editorInstall}" == "vim" ] ; then
     # Install bundles and plugins for vim
         vim +PluginInstall +qall
         vim +BundleInstall +qall
-        echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
     else
         echo -e "not installing VIM bundles on Cygwin..."
         # add Cygwin specifics to customized bashrc 
@@ -578,6 +592,7 @@ elif [ "${editorInstall}" == "vim" ] ; then
         echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
     fi
 fi
+echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
 
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
