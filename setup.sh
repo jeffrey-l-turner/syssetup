@@ -19,8 +19,6 @@
 # setup some useful error handling functions
 #########################################################
 
-set -u # exit if undefined variables
-set -e # exit if any non-zero exits
  
 usage() {
  	echo `basename $0`: ERROR: $* 1>&2
@@ -148,11 +146,13 @@ installNVM (){
 }
 
 which node > /dev/null 2>&1 # for Cygwin compatibility
+set +e
 if [ $? -eq 0 ]; then
     nodeInstalled="true"
 else
     nodeInstalled="false"
 fi
+set -e
 
 # Global installation for node:
 nodeGlobalInstall() {
@@ -169,8 +169,10 @@ nodeGlobalInstall() {
       echo -e  "enter sudo password if prompted"
       echo -e " "
       if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
+          set +e
           installNVM
           brew install node
+          set -e
       else
           installNVM
           n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
@@ -303,6 +305,8 @@ toggleVimEmacs(){
 }
 
 shootProfile
+# set -u # exit if undefined variables
+set -e # exit if any non-zero exits
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
@@ -317,8 +321,10 @@ if [ "${OS}" == "mac" ]; then
         make
         exit 1
     fi
+    set +e
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     brew install ctags
+    set -e
 fi
 
 # setup ln options for dotfile linking
@@ -417,6 +423,7 @@ printMenu(){
     do
         printMenu
     done
+    read option;
     if [[ "$option" == "6" || "$option" == "c" || "$option" == "y" ]]; then
         echo "Starting installation..."
         echo 
@@ -425,7 +432,7 @@ printMenu(){
         return;
     fi
     runOption
-}
+} 
 
 ####################################################################
 # Run an Option
@@ -450,6 +457,7 @@ runOption(){
 
 
 # Only have susccesfully used following as means to test for interactivity
+set +e
 tty -s
 if [[ $? -eq 0 ]] ; then
     echo "Interactive mode..."
@@ -468,6 +476,7 @@ else
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
 fi
+set -e
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
@@ -500,11 +509,13 @@ else # install node globally via binary
   fi
   # install apt-cygwin for individual cygwin commands
   which $AppInstall > /dev/null 2>&1
+  set +e
   if [ $? -eq 1 ] ; then
     echo -e "installing apt-cyg from GitHub"
     curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
     chmod +x /usr/bin/apt-cyg
   fi
+  set -e
   $AppInstall install rlwrap
   $npm install eslint -g
   $npm install js-beautify -g
