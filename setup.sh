@@ -18,6 +18,9 @@
 #########################################################
 # setup some useful error handling functions
 #########################################################
+
+set -u # exit if undefined variables
+set -e # exit if any non-zero exits
  
 usage() {
  	echo `basename $0`: ERROR: $* 1>&2
