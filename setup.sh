@@ -18,7 +18,6 @@
 #########################################################
 # setup some useful error handling functions
 #########################################################
-
  
 usage() {
  	echo `basename $0`: ERROR: $* 1>&2
@@ -415,7 +414,6 @@ printMenu(){
     do
         printMenu
     done
-    read option;
     if [[ "$option" == "6" || "$option" == "c" || "$option" == "y" ]]; then
         echo "Starting installation..."
         echo 
@@ -424,7 +422,7 @@ printMenu(){
         return;
     fi
     runOption
-} 
+}
 
 ####################################################################
 # Run an Option
@@ -467,6 +465,7 @@ else
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
 fi
+set -u # exit if undefined variables
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
