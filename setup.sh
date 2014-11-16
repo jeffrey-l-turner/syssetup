@@ -50,19 +50,6 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
-#########################################################
-# setup colors for output
-#########################################################
- 
-black() { echo -e "$(tput setaf 0)$*$(tput setaf 9)"; }
-red() { echo -e "$(tput setaf 1)$*$(tput setaf 9)"; }
-green() { echo -e "$(tput setaf 2)$*$(tput setaf 9)"; }
-yellow() { echo -e "$(tput setaf 3)$*$(tput setaf 9)"; }
-blue() { echo -e "$(tput setaf 4)$*$(tput setaf 9)"; }
-magenta() { echo -e "$(tput setaf 5)$*$(tput setaf 9)"; }
-cyan() { echo -e "$(tput setaf 6)$*$(tput setaf 9)"; }
-white() { echo -e "$(tput setaf 7)$*$(tput setaf 9)"; }
-
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
 nvmuse="v0.10.32" 
@@ -300,6 +287,30 @@ toggleVimEmacs(){
 }
 
 shootProfile
+
+#########################################################
+# setup colors for output / use plain echo for cygwin
+#########################################################
+if [ "${OS}" == "cygwin" ] ; then
+    black() { echo -e "$*"; }
+    red() { echo -e "$*"; }
+    green() { echo -e "$*"; }
+    yellow() { echo -e "$*"; }
+    blue() { echo -e "$*"; }
+    magenta() { echo -e "$*"; }
+    cyan() { echo -e "$*"; }
+    white() { echo -e "$*"; }
+else
+    black() { echo -e "$(tput setaf 0)$*$(tput setaf 9)"; }
+    red() { echo -e "$(tput setaf 1)$*$(tput setaf 9)"; }
+    green() { echo -e "$(tput setaf 2)$*$(tput setaf 9)"; }
+    yellow() { echo -e "$(tput setaf 3)$*$(tput setaf 9)"; }
+    blue() { echo -e "$(tput setaf 4)$*$(tput setaf 9)"; }
+    magenta() { echo -e "$(tput setaf 5)$*$(tput setaf 9)"; }
+    cyan() { echo -e "$(tput setaf 6)$*$(tput setaf 9)"; }
+    white() { echo -e "$(tput setaf 7)$*$(tput setaf 9)"; }
+fi
+
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
