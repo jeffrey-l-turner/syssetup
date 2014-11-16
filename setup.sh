@@ -515,6 +515,7 @@ else # install node globally via binary
     chmod +x /usr/bin/apt-cyg
   fi
   $AppInstall install rlwrap
+  $AppInstall install ncurses # for clear command
   $npm install eslint -g
   $npm install js-beautify -g
 fi
