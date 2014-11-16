@@ -603,7 +603,7 @@ else
     rm -rf dotfiles/term_settings/
 fi 
 
-#Copy over Chrome debugger environment for MAC usage
+#Copy over Chrome Canary debugger environment for MAC usage
 if [ "${OS}" == "mac" ]; then
     echo 'export CHROME_BIN=/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary' >> ~/.bashrc_custom
     echo 'DebugBrowser="${CHROME_BIN}"'  >> ~/.bashrc_custom
