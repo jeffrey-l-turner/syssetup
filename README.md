@@ -38,9 +38,6 @@ Then, execute:
 ```
 to finish setting up git for ctagging, etc. in the new shell.
 
-Notes: updated to include status updates on command line prompt
-
-
-.
+Notes: updated to include status updates on via color and number of uncommited changes command line prompt
 
 See also http://github.com/jeffrey-l-turner/dotfiles
