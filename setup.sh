@@ -603,11 +603,16 @@ else
     rm -rf dotfiles/term_settings/
 fi 
 
-#Copy over Chrome Canary debugger environment for MAC usage
+#Copy over Chrome debugger environment for MAC usage
 if [ "${OS}" == "mac" ]; then
     echo 'export CHROME_BIN=/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary' >> ~/.bashrc_custom
     echo 'DebugBrowser="${CHROME_BIN}"'  >> ~/.bashrc_custom
+# add Visual Studio config for git
+    git config --global core.autocrlf input
+    git config --global core.safecrlf false
 fi
+# add better git log
+git config --global alias.lg1 "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
 
 #Install Heroku tool belt if Heroku keys were installed in ~/.ssh
 #Install wget and use different install if Mac OS:
@@ -623,4 +628,3 @@ fi
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
 echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
-
