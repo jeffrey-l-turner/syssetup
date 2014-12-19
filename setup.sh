@@ -58,8 +58,8 @@ winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
-# gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
-gitdotfiles="git://github.com/jeffrey-l-turner/dotfiles.git"
+# originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
+gitdotfiles="https://github.com/jeffrey-l-turner/syssetup.git"
 
 # location of vundle on Git
 vundle="https://github.com/gmarik/vundle.git"
@@ -118,17 +118,24 @@ installNVM (){
         # https://github.com/creationix/nvm
         # nvm locations have frequently changed
         # using v0.17.0 currently from githubusercontent:
-        curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash
-
-        # Load nvm and install latest production node
-        source $HOME/.nvm/nvm.sh
+        # too many problems with git usage on following:
+        #curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash 
+        # using clone and manual installation:
+        if [ ! -d ~/.nvm/ ]; then
+            git clone git://github.com/creationix/nvm.git ~/.nvm
+            # Load nvm and install latest production node
+            if [ "$?" -ne 0 ]; then 
+               echo "nvm installation command failed"; 
+               exit 1; 
+            fi
+            echo "sourcing nvm.sh"
+            source $HOME/.nvm/nvm.sh
+        fi
         nvm install $nvmuse
         nvm use $nvmuse
         nvm alias default $nvmuse
-        nvmInstalled="true"
-    else
-        nvmInstalled="true"
-    fi
+    fi 
+    nvmInstalled="true"
 }
 
 which node > /dev/null 2>&1 # for Cygwin compatibility
@@ -476,7 +483,6 @@ else
     echo "Will use node version: $nvmuse" 
     echo "Application Installer: $AppInstall"  
 fi
-set -u # exit if undefined variables
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
@@ -486,6 +492,9 @@ set -u # exit if undefined variables
 if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix 
   installGit  
   installNVM 
+
+# moving set -u since nvm installation has undefined variables
+set -u # exit if undefined variables
 
   # Set npm to local version and then use sudo for global installation
   npm="$HOME/.nvm/$nvmuse/bin/npm"
