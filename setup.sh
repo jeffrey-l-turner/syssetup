@@ -68,6 +68,9 @@ vundle="https://github.com/gmarik/vundle.git"
 commandt="git://git.wincent.com/command-t.git bundle/command-t" 
 libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
+# location of git completion for bash
+gitcomplete="https://github.com/bobthecow/git-flow-completion.git" 
+ 
 #########################################################################
 # ruby location for windows: http://rubyinstaller.org/downloads/archives
 #########################################################################
