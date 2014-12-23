@@ -59,7 +59,7 @@ winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
 # originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
-gitdotfiles="https://github.com/jeffrey-l-turner/syssetup.git"
+gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
 vundle="https://github.com/gmarik/vundle.git"
@@ -79,7 +79,13 @@ lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
-gitInstalled="false"
+if [ -f `which git` ]; then
+    gitInstalled="true"
+else
+    gitInstalled="false"
+    echo "Git not installed..."
+fi
+
 installGit() {
     if [ "$gitInstalled" == "false" ]; then
        if [ "${OS}" == "mac" ]; then
@@ -101,6 +107,7 @@ cloneDotFiles(){
         cd $HOME
         installGit
         if [ -d ./dotfiles/ ]; then
+            rm -rf dotfiles.old
             mv dotfiles dotfiles.old
         fi
         if [ -d .emacs.d/ ]; then
@@ -122,7 +129,7 @@ installNVM (){
         # nvm locations have frequently changed
         # using v0.17.0 currently from githubusercontent:
         # too many problems with git usage on following:
-        #curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash 
+        # curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash 
         # using clone and manual installation:
         if [ ! -d ~/.nvm/ ]; then
             git clone git://github.com/creationix/nvm.git ~/.nvm
@@ -198,33 +205,33 @@ shootProfile(){
         gitInstalled="true"
     else
         OS=`uname`
-        if [ "${OS}" = "Linux" ] ; then
-            if [ -f /etc/redhat-release ] ; then
+        if [ "${OS}" = "Linux" ]; then
+            if [ -f /etc/redhat-release ]; then
                 DistroBasedOn='RedHat'
                 DIST=`cat /etc/redhat-release |sed s/\ release.*//`
                 PSEUDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
                 REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
                 AppInstall="sudo yum "
-            elif [ -f /etc/SuSE-release ] ; then
+            elif [ -f /etc/SuSE-release ]; then
                 DistroBasedOn='SuSe'
                 PSEUDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
                 REV=`cat /etc/SuSE-release | tr "\n" ' ' | sed s/.*=\ //`
                 AppInstall="exit 2"
-            elif [ -f /etc/mandrake-release ] ; then
+            elif [ -f /etc/mandrake-release ]; then
                 DistroBasedOn='Mandrake'
                 PSEUDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
                 REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
                 AppInstall="exit 2"
-            elif [ -f /etc/debian_version ] ; then
+            elif [ -f /etc/debian_version ]; then
                 DistroBasedOn='Debian'
-                if [ -f /etc/lsb-release ] ; then
+                if [ -f /etc/lsb-release ]; then
                         DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
                             PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
                             REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
                         fi
                 AppInstall="sudo apt-get "
             fi
-            if [ -f /etc/UnitedLinux-release ] ; then
+            if [ -f /etc/UnitedLinux-release ]; then
                 DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
             fi
             OS=`lowercase $OS`
@@ -243,14 +250,11 @@ shootProfile(){
 
 
 # Setup for config files using ssh:
-if [ -d $HOME/.ssh/ ]; then
-    touch $HOME/.ssh/config
-    chmod 600 $HOME/.ssh/config
-else
+if [ ! -d $HOME/.ssh/ ]; then
     mkdir $HOME/.ssh
-    touch $HOME/.ssh/config
-    chmod 600 $HOME/.ssh/config
-fi
+fi 
+touch $HOME/.ssh/config 
+chmod 600 $HOME/.ssh/config
 
 # These are functions to setup ssh keys for Heroku and GitHub:
 # The keys must still be registered with the respective accounts by the user
@@ -296,30 +300,35 @@ toggleVimEmacs(){
 
 }
 
+# Load menu in interactive mode
 shootProfile
 
+# Put dotfiles in place if not already there
+cloneDotFiles
+
 #########################################################
-# setup colors for output / use plain echo for cygwin
+# setup colors for output 
 #########################################################
-if [ "${OS}" == "cygwin" ] ; then
-    black() { echo -e "$*"; }
-    red() { echo -e "$*"; }
-    green() { echo -e "$*"; }
-    yellow() { echo -e "$*"; }
-    blue() { echo -e "$*"; }
-    magenta() { echo -e "$*"; }
-    cyan() { echo -e "$*"; }
-    white() { echo -e "$*"; }
-else
-    black() { echo -e "$(tput setaf 0)$*$(tput setaf 9)"; }
-    red() { echo -e "$(tput setaf 1)$*$(tput setaf 9)"; }
-    green() { echo -e "$(tput setaf 2)$*$(tput setaf 9)"; }
-    yellow() { echo -e "$(tput setaf 3)$*$(tput setaf 9)"; }
-    blue() { echo -e "$(tput setaf 4)$*$(tput setaf 9)"; }
-    magenta() { echo -e "$(tput setaf 5)$*$(tput setaf 9)"; }
-    cyan() { echo -e "$(tput setaf 6)$*$(tput setaf 9)"; }
-    white() { echo -e "$(tput setaf 7)$*$(tput setaf 9)"; }
-fi
+source "${HOME}/dotfiles/colordefs.sh"
+
+Black="$(color Black esc)"
+Red="$(color Red esc)"
+Green="$(color Green esc)"
+Yellow="$(color Yellow esc)"
+Blue="$(color Blue esc)"
+Purple="$(color Purple esc)"
+Cyan="$(color Cyan esc)"
+White="$(color White esc)"
+Color_Off="$(color Color_Off esc)"
+
+black() { echo -e "${Black}$*${Color_Off}"; }
+red() { echo -e "${Red}$*${Color_Off}"; }
+green() { echo -e "${Green}$*${Color_Off}"; }
+yellow() { echo -e "${Yellow}$*${Color_Off}"; }
+blue() { echo -e "${Blue}$*${Color_Off}"; }
+magenta() { echo -e "${Purple}$*${Color_Off}"; }
+cyan() { echo -e "${Cyan}$*${Color_Off}"; }
+white() { echo -e "${White}$*${Color_Off}"; }
 
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
@@ -574,8 +583,6 @@ elif [ "${OS}" != "cygwin" ] ; then
     git clone $vundle $HOME/.vim/bundle/vundle
 fi
 
-# Call to put dotfiles in place if not already there
-cloneDotFiles;
 cd $HOME
 
 ln $lnopts dotfiles/.screenrc $HOME
