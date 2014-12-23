@@ -333,7 +333,8 @@ white() { echo -e "${White}$*${Color_Off}"; }
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    if [ -e "`which xcode-select`" ]; then
+    xcode-select -p
+    if [ "$?" -eq 0 ]; then
         echo "xcode version: `xcode-select --version` installed"
     else
         echo "xcode command line tools are not installed..." 
@@ -478,7 +479,7 @@ runOption(){
 
 # Only have susccesfully used following as means to test for interactivity
 tty -s
-if [[ $? -eq 0 ]] ; then
+if [[ "$?" -eq 0 ]] ; then
     echo "Interactive mode..."
     printMenu
 else
