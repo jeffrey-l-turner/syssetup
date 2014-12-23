@@ -624,7 +624,6 @@ elif [ "${editorInstall}" == "vim" ] ; then
         echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
     fi
 fi
-echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
 
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
@@ -656,6 +655,9 @@ if [ "$herokuKey" == "true" ]; then
     fi
 fi
 
+# Use favorite VIM color scheme
+echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
+
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
-echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
+echo "In the new shell, execute ~/dotfiles/.git_template/config.sh to finishing setting up git to auto-index ctags"
