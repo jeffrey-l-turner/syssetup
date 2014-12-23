@@ -152,14 +152,14 @@ bashCompletion="false"
 installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
-            brew install bash-completion
+            $AppInstall install bash-completion
             # source bash completion file:
             echo '# setup bash completion' >> $HOME/.bashrc_custom
             echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
             echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
             echo 'fi' >> $HOME/.bashrc_custom
         else
-            echo "not installing bash completion on other non-Mac OS"
+            $AppInstall install bash-completion
         fi
     fi
 }
