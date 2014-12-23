@@ -303,6 +303,24 @@ toggleVimEmacs(){
 # Load menu in interactive mode
 shootProfile
 
+# If using Mac OS, then check if xcode is installed, then install brew & ctags
+if [ "${OS}" == "mac" ]; then
+    `which xcode-select` -p
+    if [ "$?" -eq 0 ]; then
+        echo "xcode version: `xcode-select --version` installed"
+    else
+        echo "xcode command line tools are not installed..." 
+        echo "please install xcode before proceeding" 
+        echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
+        echo ""
+        echo "Attempting to execute make... please follow instructions to install xcode and re-run $0"
+        make
+        exit 1
+    fi
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew install ctags
+fi
+
 # Put dotfiles in place if not already there
 cloneDotFiles
 
@@ -329,25 +347,6 @@ blue() { echo -e "${Blue}$*${Color_Off}"; }
 magenta() { echo -e "${Purple}$*${Color_Off}"; }
 cyan() { echo -e "${Cyan}$*${Color_Off}"; }
 white() { echo -e "${White}$*${Color_Off}"; }
-
-
-# If using Mac OS, then check if xcode is installed, then install brew & ctags
-if [ "${OS}" == "mac" ]; then
-    `which xcode-select` -p
-    if [ "$?" -eq 0 ]; then
-        echo "xcode version: `xcode-select --version` installed"
-    else
-        echo "xcode command line tools are not installed..." 
-        echo "please install xcode before proceeding" 
-        echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
-        echo ""
-        echo "Attempting to execute make... please follow instructions to install xcode and re-run $0"
-        make
-        exit 1
-    fi
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew install ctags
-fi
 
 # setup ln options for dotfile linking
 if [ "${OS}" == "mac" ]; then
