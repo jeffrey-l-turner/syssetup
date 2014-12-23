@@ -158,6 +158,10 @@ installBashCompletion (){
             echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
             echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
             echo 'fi' >> $HOME/.bashrc_custom
+        #else if [ "${OS}" == "cygwin" ]; then
+            # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
+            # Rename it to git-flow
+        #    echo "figuring out bash completion for cygwin"
         else
             $AppInstall install bash-completion
         fi
