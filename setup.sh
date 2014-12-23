@@ -333,13 +333,13 @@ white() { echo -e "${White}$*${Color_Off}"; }
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    xcode-select -p
+    `which xcode-select` -p
     if [ "$?" -eq 0 ]; then
         echo "xcode version: `xcode-select --version` installed"
     else
         echo "xcode command line tools are not installed..." 
         echo "please install xcode before proceeding" 
-        echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12 )"
+        echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
         echo ""
         echo "Attempting to execute make... please follow instructions to install xcode and re-run $0"
         make
