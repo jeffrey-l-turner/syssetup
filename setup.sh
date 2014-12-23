@@ -139,8 +139,8 @@ installNVM (){
                exit 1; 
             fi
             echo "sourcing nvm.sh"
-            source $HOME/.nvm/nvm.sh
-        fi
+        fi 
+        source $HOME/.nvm/nvm.sh
         nvm install $nvmuse
         nvm use $nvmuse
         nvm alias default $nvmuse
@@ -161,12 +161,14 @@ installBashCompletion (){
         #else if [ "${OS}" == "cygwin" ]; then
             # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
             # Rename it to git-flow
-        #    echo "figuring out bash completion for cygwin"
+            #echo "bash completion not installaed on Cygwin"
         else
             $AppInstall install bash-completion
         fi
     fi
+    bashCompletion="true"
 }
+ 
 
 which node > /dev/null 2>&1 # for Cygwin compatibility
 if [ $? -eq 0 ]; then
@@ -353,6 +355,7 @@ Black="$(color Black esc)"
 Red="$(color Red esc)"
 Green="$(color Green esc)"
 Yellow="$(color Yellow esc)"
+IYellow="$(color On_IYellow esc)"
 Blue="$(color Blue esc)"
 Purple="$(color Purple esc)"
 Cyan="$(color Cyan esc)"
@@ -363,6 +366,7 @@ black() { echo -e "${Black}$*${Color_Off}"; }
 red() { echo -e "${Red}$*${Color_Off}"; }
 green() { echo -e "${Green}$*${Color_Off}"; }
 yellow() { echo -e "${Yellow}$*${Color_Off}"; }
+iyellow() { echo -e "${IYellow}$*${Color_Off}"; }
 blue() { echo -e "${Blue}$*${Color_Off}"; }
 magenta() { echo -e "${Purple}$*${Color_Off}"; }
 cyan() { echo -e "${Cyan}$*${Color_Off}"; }
@@ -418,8 +422,8 @@ printMenu(){
         green "GitHub key has been created and placed in ~/.ssh/github.rsa"
     fi
     if [ "${OS}" == "mac" ]; then
-        echo -e '\n\033[43;30m'" Mac OS users should note that this installation script relies on the use of Homebrew and may conflict "
-        echo -e  "                                       with use of Macports or Fink!                                   \033[0m\n"
+        iyellow " Mac OS users should note that this installation script relies on the use of Homebrew and may conflict "
+        iyellow "                                         with use of Macports or Fink!                                 \n"
     fi
     echo " "
     echo "=============================================================================================================="
@@ -619,14 +623,15 @@ if [ "${editorInstall}" == "emacs" ] ; then
         ln -sf dotfiles/.emacs.d .  
 elif [ "${editorInstall}" == "vim" ] ; then
     if [ "${OS}" != "cygwin" ] ; then 
-        cp -f dotfiles/.vimrc $HOME
+        rm -f "${HOME}/.vimrc"
+        cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
 
     # setup pathogen specific installs by using git clones
-        cd ~/.vim 
+        cd "${HOME}/.vim" 
         git submodule add "${commandt}" bundle/command-t 
         git submodule init
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/`` \& use git pull to update"
-        cd ~
+        cd "${HOME}"
 
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
@@ -674,6 +679,9 @@ if [ "$herokuKey" == "true" ]; then
         wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
     fi
 fi
+
+# Install Bash and Git Flow Completion:
+installBashCompletion 
 
 # Use favorite VIM color scheme
 echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
