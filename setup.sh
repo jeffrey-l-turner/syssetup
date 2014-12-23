@@ -313,8 +313,8 @@ if [ "${OS}" == "mac" ]; then
         echo "please install xcode before proceeding" 
         echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
         echo ""
-        echo "Attempting to execute make... please follow instructions to install xcode and re-run $0"
-        make
+        echo "Attempting to install xcode tools... please follow instructions to install and re-run $0"
+        `which xcode-select` --install
         exit 1
     fi
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
