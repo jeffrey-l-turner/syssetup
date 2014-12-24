@@ -65,7 +65,7 @@ gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 vundle="https://github.com/gmarik/vundle.git"
 
 # location of pathogent specific plugins (using generally) 
-commandt="git://git.wincent.com/command-t.git bundle/command-t" 
+commandt="git://git.wincent.com/command-t.git" 
 libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
 # location of git completion for bash
@@ -628,8 +628,9 @@ elif [ "${editorInstall}" == "vim" ] ; then
 
     # setup pathogen specific installs by using git clones
         cd "${HOME}/.vim" 
+        source "${HOME}/dotfiles/.git_template/config.sh"
+        git init
         git submodule add "${commandt}" bundle/command-t 
-        git submodule init
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/`` \& use git pull to update"
         cd "${HOME}"
 
