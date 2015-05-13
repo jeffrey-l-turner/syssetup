@@ -155,16 +155,18 @@ installBashCompletion (){
             $AppInstall install bash-completion
             # source bash completion file:
             echo '# setup bash completion' >> $HOME/.bashrc_custom
-        #else if [ "${OS}" == "cygwin" ]; then
+        
+            $AppInstall install bash-completion
+        fi
+        if [ "${OS}" == "cygwin" ]; then
             # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
             # Rename it to git-flow
-            #echo "bash completion not installaed on Cygwin"
-        #else if [ "${OS}" == "mac" ]; then
+            echo "bash completion not installaed on Cygwin"
+        fi
+        if [ "${OS}" == "mac" ]; then
             echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
             echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
             echo 'fi' >> $HOME/.bashrc_custom
-        else 
-            $AppInstall install bash-completion
         fi
     fi
     bashCompletion="true"
