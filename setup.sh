@@ -554,15 +554,19 @@ set -u # exit if undefined variables
   # Install rlwrap to provide libreadline features with node
   # See: http://nodejs.org/api/repl.html#repl_repl
   if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-    $AppInstall install readline-devel 
-    curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz
-    pushd /tmp/
-    tar -zxvf /tmp/readline-master.tar.gz
-    cd readline-master
-    ./configure
-    make
-    sudo make install
-    popd
+      if [ ! -f `which rlwrap` ] ; then 
+          $AppInstall install readline-devel 
+          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+          pushd /tmp/ 
+          tar -zxvf /tmp/readline-master.tar.gz  
+          cd readline-master 
+          ./configure 
+          make 
+          sudo make install 
+          popd
+      else
+          echo 'rlwrap already installed!'
+      fi
   else
     $AppInstall install -y rlwrap
   fi 
@@ -588,7 +592,7 @@ fi
 if [ "${OS}" == "mac" ]; then
   $AppInstall install mongodb 
 elif [ "${DistroBasedOn}" == "redhat" ]; then 
-    echo "Must manually install MongoDB on RHEL"
+    echo "Must manually install MongoDB on RHEL/CentOS"
     echo "       Mongo DB not installed!!"
 elif [ "${OS}" == "cygwin" ] ; then
 	echo not installing Mongo from command line
@@ -648,7 +652,7 @@ elif [ "${editorInstall}" == "vim" ] ; then
         # setup vim on CentOS
         if [ "${DIST}" == "CentOS" ] ; then
             $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
-            echo "alias vim vi " >> ~/.bashrc_custom
+            echo "alias vi=vim " >> ~/.bashrc_custom
         fi 
 
     # setup pathogen specific installs by using git clones
