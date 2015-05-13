@@ -153,8 +153,12 @@ installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
             $AppInstall install bash-completion
-            # source bash completion file:
-            echo '# setup bash completion' >> $HOME/.bashrc_custom
+            # set note on bash completion in ~/.bashrc_custom
+            if [ "$?" -eq 0 ]; then
+                echo '# setup bash completion setup for shell' >> $HOME/.bashrc_custom
+            else
+                echo '# setup bash completion not setup; must manually enable' >> $HOME/.bashrc_custom
+            fi
         
             $AppInstall install bash-completion
         fi
