@@ -171,7 +171,19 @@ installBashCompletion (){
             echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
             echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
             echo 'fi' >> $HOME/.bashrc_custom
+            # source bash completion file:
+            echo '# setup bash completion' >> "${HOME}/.bashrc_custom"
+            echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> "${HOME}/.bashrc_custom"
+            echo '       . `brew --prefix`/etc/bash_completion' >> "${HOME}/.bashrc_custom"
+            echo 'fi' >> "${HOME}/.bashrc_custom"
+        #else if [ "${OS}" == "cygwin" ]; then
+            # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
+            # Rename it to git-flow
+            #echo "bash completion not installaed on Cygwin"
+        else
+            $AppInstall install bash-completion
         fi
+        curl https://raw.githubusercontent.com/bobthecow/git-flow-completion/master/git-flow-completion.bash > $HOME/.git-flow-completion
     fi
     bashCompletion="true"
 }
@@ -263,7 +275,12 @@ shootProfile(){
                         DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
                             PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
                             REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
-                        fi
+                elif [ -f /etc/os-release ]; then
+                    DistroBasedOn='Debian'
+                    DIST=`cat /etc/os-release | grep '^PRETTY_NAME' | awk -F=  '{ print $2 }'`
+                    REV=`cat /etc/os-release | grep '^VERSION_ID' | awk -F=  '{ print $2 }' | sed 's/\"//g'`
+                    PSEUDONAME=`grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }' | awk -F'\(' '{ print $2 }' | sed 's/)\"//'`
+                fi
                 AppInstall="sudo apt-get "
             fi
             if [ -f /etc/UnitedLinux-release ]; then
