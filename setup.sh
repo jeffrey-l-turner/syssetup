@@ -65,7 +65,7 @@ gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 vundle="https://github.com/gmarik/vundle.git"
 
 # location of pathogent specific plugins (using generally) 
-commandt="git://git.wincent.com/command-t.git bundle/command-t" 
+commandt="git://git.wincent.com/command-t.git" 
 libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
 # location of git completion for bash
@@ -153,17 +153,24 @@ installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
             $AppInstall install bash-completion
-            # source bash completion file:
-            echo '# setup bash completion' >> $HOME/.bashrc_custom
+            # set note on bash completion in ~/.bashrc_custom
+            if [ "$?" -eq 0 ]; then
+                echo '# setup bash completion setup for shell' >> $HOME/.bashrc_custom
+            else
+                echo '# setup bash completion not setup; must manually enable' >> $HOME/.bashrc_custom
+            fi
+        
+            $AppInstall install bash-completion
+        fi
+        if [ "${OS}" == "cygwin" ]; then
+            # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
+            # Rename it to git-flow
+            echo "bash completion not installaed on Cygwin"
+        fi
+        if [ "${OS}" == "mac" ]; then
             echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
             echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
             echo 'fi' >> $HOME/.bashrc_custom
-        #else if [ "${OS}" == "cygwin" ]; then
-            # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
-            # Rename it to git-flow
-            #echo "bash completion not installaed on Cygwin"
-        else
-            $AppInstall install bash-completion
         fi
     fi
     bashCompletion="true"
@@ -228,11 +235,17 @@ shootProfile(){
     else
         OS=`uname`
         if [ "${OS}" = "Linux" ]; then
-            if [ -f /etc/redhat-release ]; then
-                DistroBasedOn='RedHat'
+            if [ -f /etc/centos-release ]; then
+                DistroBasedOn='redhat'
+                DIST=`cat /etc/centos-release | sed 's/ *Linux.*//I'`
+                PSEUDONAME=`cat /etc/centos-release | sed s/.*\(// | sed s/\)//`
+                REV=`cat /etc/centos-release | sed s/.*release\ // | sed s/\ .*//`
+                AppInstall="sudo yum "
+            elif [ -f /etc/redhat-release ]; then
+                DistroBasedOn='redhat'
                 DIST=`cat /etc/redhat-release |sed s/\ release.*//`
                 PSEUDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+                REV=`cat /etc/centos-release | sed s/.*release\ // | sed s/\ .*//`
                 AppInstall="sudo yum "
             elif [ -f /etc/SuSE-release ]; then
                 DistroBasedOn='SuSe'
@@ -250,7 +263,12 @@ shootProfile(){
                         DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
                             PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
                             REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
-                        fi
+                elif [ -f /etc/os-release ]; then
+                    DistroBasedOn='Debian'
+                    DIST=`cat /etc/os-release | grep '^PRETTY_NAME' | awk -F=  '{ print $2 }'`
+                    REV=`cat /etc/os-release | grep '^VERSION_ID' | awk -F=  '{ print $2 }' | sed 's/\"//g'`
+                    PSEUDONAME=`grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }' | awk -F'\(' '{ print $2 }' | sed 's/)\"//'`
+                fi
                 AppInstall="sudo apt-get "
             fi
             if [ -f /etc/UnitedLinux-release ]; then
@@ -546,7 +564,23 @@ set -u # exit if undefined variables
 
   # Install rlwrap to provide libreadline features with node
   # See: http://nodejs.org/api/repl.html#repl_repl
-  $AppInstall install -y rlwrap
+  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
+      if [ ! -f `which rlwrap` ] ; then 
+          $AppInstall install readline-devel 
+          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+          pushd /tmp/ 
+          tar -zxvf /tmp/readline-master.tar.gz  
+          cd readline-master 
+          ./configure 
+          make 
+          sudo make install 
+          popd
+      else
+          echo 'rlwrap already installed!'
+      fi
+  else
+    $AppInstall install -y rlwrap
+  fi 
 else # install node globally via binary
   npm="npm"
   if [ nodeInstalled == "false" ] ; then
@@ -568,8 +602,8 @@ fi
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
 if [ "${OS}" == "mac" ]; then
   $AppInstall install mongodb 
-elif [ "${DistroBasedOn}" == "redhat" ]; then
-    echo "Must manually install MongoDB on RHEL"
+elif [ "${DistroBasedOn}" == "redhat" ]; then 
+    echo "Must manually install MongoDB on RHEL/CentOS"
     echo "       Mongo DB not installed!!"
 elif [ "${OS}" == "cygwin" ] ; then
 	echo not installing Mongo from command line
@@ -601,7 +635,7 @@ elif [ "${OS}" != "cygwin" ] ; then
 # Install VIM configuration files including vundle and colorschemes
     # These use configuration specified in dotfiles/.vimrc:
     if [ -d $HOME/.vim/bundle ]; then
-        mv $HOME/.vim/bundle $HOME/.vim/bundle.old
+        rm -rf $HOME/.vim/bundle 
     fi
     mkdir -p $HOME/.vim/bundle
     git clone $vundle $HOME/.vim/bundle/vundle
@@ -626,10 +660,17 @@ elif [ "${editorInstall}" == "vim" ] ; then
         rm -f "${HOME}/.vimrc"
         cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
 
+        # setup vim on CentOS
+        if [ "${DIST}" == "CentOS" ] ; then
+            $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
+            echo "alias vi=vim " >> ~/.bashrc_custom
+        fi 
+
     # setup pathogen specific installs by using git clones
         cd "${HOME}/.vim" 
+        source "${HOME}/dotfiles/.git_template/config.sh"
+        git init
         git submodule add "${commandt}" bundle/command-t 
-        git submodule init
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/`` \& use git pull to update"
         cd "${HOME}"
 
