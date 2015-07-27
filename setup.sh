@@ -234,6 +234,7 @@ shootProfile(){
         gitInstalled="true"
     else
         OS=`uname`
+
         if [ "${OS}" = "Linux" ]; then
             if [ -f /etc/centos-release ]; then
                 DistroBasedOn='redhat'
@@ -287,6 +288,9 @@ shootProfile(){
     readonly KERNEL
     readonly MACH
 }
+if [ "${gitInstalled}" -ne "true" ] ; then 
+        installGit;
+fi
 
 
 # Setup for config files using ssh:
