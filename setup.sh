@@ -246,7 +246,7 @@ shootProfile(){
                 DistroBasedOn='redhat'
                 DIST=`cat /etc/redhat-release |sed s/\ release.*//`
                 PSEUDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/centos-release | sed s/.*release\ // | sed s/\ .*//`
+                REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
                 AppInstall="sudo yum "
             elif [ -f /etc/SuSE-release ]; then
                 DistroBasedOn='SuSe'
@@ -288,7 +288,7 @@ shootProfile(){
     readonly KERNEL
     readonly MACH
 }
-if [ "${gitInstalled}" -ne "true" ] ; then 
+if [ "${gitInstalled}" != "true" ] ; then 
         installGit;
 fi
 
