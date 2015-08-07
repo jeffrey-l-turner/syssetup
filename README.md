@@ -7,10 +7,9 @@ This is a script customized and originally cloned from github.com:startup-class/
 
 setup.sh
 =========
-This setup script offers an interactive menu for setup of both ssh keys (for Heroku and Github)
-as well as identifying the system parameters prior to invocation. 
+This setup script offers an interactive menu for setting up and ssh-agent for ssh keys (all private keys associated with .pub keys in ~/.ssh) as well as identifying the system parameters prior to invocation. 
 
-The script has been updated to suport an AngularJS development environment using vim with ctags and eslint. The scripts will automatically re-index ctags when working with git repositories.
+The script has been updated to suport an AngularJS development environment using vim with ctags as well as eslint. The scripts will automatically re-index ctags when working with git repositories.
 
 Run the following from a terminal window on your virtual machine to interactively setup your system:
 
@@ -24,11 +23,10 @@ Alternatively, you may also use a non-interactive setup using the defaults:
 
 These defaults for non-interactive setup will not install editors, and are primarily designed for running a headless Node.js system.
 
-After running interactive setup, you may optionally generate Heroku and GitHub keys. Place the public keys
-(~/.ssh/*.pub) appropriately within your GitHub and Heroku profiles/accounts. 
+After running interactive setup, you may optionally generate ssh keys. Place the public keys (~/.ssh/\*.pub) appropriately within your appropriate profiles/accounts (e.g. GitHub). 
 
 Test by executing: ```ssh -T git@github.com```; and/or test by executing: ```ssh -vT git@heroku.com``` 
-*Note: shell request will fail but message will show:* "Authentication succeeded (publickey)."
+**Note: shell request will fail but message will show: "Authentication succeeded (publickey)."**
 
 Logout of shell and log back in to properly setup environment.
 
