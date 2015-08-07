@@ -23,10 +23,10 @@ Alternatively, you may also use a non-interactive setup using the defaults:
 
 These defaults for non-interactive setup will not install editors, and are primarily designed for running a headless Node.js system.
 
-After running interactive setup, you may optionally generate ssh keys. Place the public keys (~/.ssh/\*.pub) appropriately within your appropriate profiles/accounts (e.g. GitHub). 
+After running interactive setup, you may optionally generate ssh keys. Place the public keys (~/.ssh/\*.pub) appropriately within your associated profiles/accounts (e.g. GitHub). 
 
-Test by executing: ```ssh -T git@github.com```; and/or test by executing: ```ssh -vT git@heroku.com``` 
-**Note: shell request will fail but message will show: "Authentication succeeded (publickey)."**
+Test by executing: ```ssh -T git@github.com```; and/or test by executing: ```ssh -vT git@heroku.com```
+   *Note: shell request will fail but message will show: "Authentication succeeded (publickey)."*
 
 Logout of shell and log back in to properly setup environment.
 
