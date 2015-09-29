@@ -346,6 +346,17 @@ toggleVimEmacs(){
 
 }
 
+# Toggle installation of MongoDB
+installMongo="false";
+
+InstallMongo(){
+    if [ "${installMongo}" == "false" ]; then
+         installMongo="true"
+     else
+         installMongo="false"
+    fi
+}
+
 # Load menu in interactive mode
 shootProfile
 
@@ -480,15 +491,22 @@ printMenu(){
         if [ "${OS}" == 'cygwin' ] ; then
             cyan "\t4) Install node from ${winNode} for global use" 
         else
-            cyan "\t4) Install node version ${nvmuse} globally "
+            white "\t4) Install node version ${nvmuse} globally "
         fi
     fi
-    red "\t5) Exit Now!"
-    green "\t6) Continue Setup"
+    if [ -f `which mongod` ] && [ "${installMongo}" == "false" ]; then
+        cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
+    elif [ "${installMongo}" = "true" ]; then
+        yellow "\t5) MongoDB will be (re-)installed; Select to toggle" 
+    else
+        white "\t5) MongoDB not currently installed; Select to install" 
+    fi
+    red "\t6) Exit Now!"
+    green "\t7) Continue Setup"
     echo -e " "
-    red "Press ^C, q or 5 if the above system information is not correct or you wish to abort installation"
+    red "Press ^C, q or 6 if the above system information is not correct or you wish to abort installation"
     white  "------------------------------------------------------------------------------------------------- "
-    green "Press press 6, c, or y to proceed"
+    green "Press press 7, c, or y to proceed"
     read option;
     while [[ $option -gt 12 || ! $(echo $option | grep '^[1-6qQyc]$') ]]
     do
@@ -513,7 +531,8 @@ runOption(){
         2) genGitHub;;
         3) toggleVimEmacs;;
         4) nodeGlobalInstall;;
-        5) exit;;
+        5) InstallMongo;;
+        6) exit;;
         q) exit;;
         Q) exit;;
         y) setFlags;;
@@ -608,19 +627,21 @@ else # install node globally via binary
 fi
 
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
-if [ "${OS}" == "mac" ]; then
-  $AppInstall install mongodb 
-elif [ "${DistroBasedOn}" == "redhat" ]; then 
-    echo "Must manually install MongoDB on RHEL/CentOS"
-    echo "       Mongo DB not installed!!"
-elif [ "${OS}" == "cygwin" ] ; then
-	echo not installing Mongo from command line
-	echo -e 'Use Windows Mongo installation (http://www.mongodb.org/downloads)'
-else
-    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-    echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
-    $AppInstall update
-    $AppInstall install mongodb-10gen
+if [ "${installMongo}" == "true" ]; then
+    if [ "${OS}" == "mac" ]; then
+      $AppInstall install mongodb 
+    elif [ "${DistroBasedOn}" == "redhat" ]; then 
+        echo "Must manually install MongoDB on RHEL/CentOS"
+        echo "       Mongo DB not installed!!"
+    elif [ "${OS}" == "cygwin" ] ; then
+    	echo not installing Mongo from command line
+    	echo -e 'Use Windows Mongo installation (http://www.mongodb.org/downloads)'
+    else
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+        echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
+        $AppInstall update
+        $AppInstall install mongodb-10gen
+    fi
 fi
 
 # Select whether to install vim or emacs configuration/files:
