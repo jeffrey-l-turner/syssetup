@@ -54,7 +54,7 @@ set -o errexit
 
 datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v0.12.7" 
+nvmuse="v0.4.0" 
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -363,8 +363,10 @@ if [ "${OS}" == "mac" ]; then
         `which xcode-select` --install
         exit 1
     fi
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    brew install ctags
+    if [ ! -f `which brew` ]; then
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        brew install ctags
+    fi
 fi
 
 # Put dotfiles in place if not already there
