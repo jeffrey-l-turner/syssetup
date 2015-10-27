@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to setup headless node system as general shell 
-# on Linux/Unix and Cygwin systems
+# on *nix and Cygwin systems
 #########################################################
 #   Script Requirements
 #
@@ -13,6 +13,8 @@
 #	mv
 #	wc
 #	cat
+#       wget
+#       echo
 #########################################################
  
 #########################################################
@@ -330,7 +332,7 @@ genGitHub(){
 
 setFlags(){
     readonly "githubKey"
-    readonly  "herokuKey"
+    readonly "herokuKey"
     readonly "editorInstall" 
 }
 
@@ -574,56 +576,56 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   installGit  
   installNVM 
 
-# moving set -u since nvm installation has undefined variables
-set -u # exit if undefined variables
-
-  # Set npm to local version and then use sudo for global installation
-  npm="$HOME/.nvm/$nvmuse/bin/npm"
+  # moving set -u since nvm installation has undefined variables
+  set -u # exit if undefined variables
   
-  # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
-  # http://jshint.com/
-  echo "use sudo password for following if prompted"
-  sudo $npm install -g jshint
-  sudo $npm install -g jslint
-  sudo $npm install -g eslint
-  sudo $npm install -g js-beautify 
-  sudo $npm install repl.history
-
-  # Install rlwrap to provide libreadline features with node
-  # See: http://nodejs.org/api/repl.html#repl_repl
-  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-      if [ ! -f `which rlwrap` ] ; then 
-          $AppInstall install readline-devel 
-          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
-          pushd /tmp/ 
-          tar -zxvf /tmp/readline-master.tar.gz  
-          cd readline-master 
-          ./configure 
-          make 
-          sudo make install 
-          popd
-      else
-          echo 'rlwrap already installed!'
-      fi
-  else
-    $AppInstall install -y rlwrap
-  fi 
+    # Set npm to local version and then use sudo for global installation
+    npm="$HOME/.nvm/$nvmuse/bin/npm"
+    
+    # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
+    # http://jshint.com/
+    echo "use sudo password for following if prompted"
+    sudo $npm install -g jshint
+    sudo $npm install -g jslint
+    sudo $npm install -g eslint
+    sudo $npm install -g js-beautify 
+    sudo $npm install repl.history
+  
+    # Install rlwrap to provide libreadline features with node
+    # See: http://nodejs.org/api/repl.html#repl_repl
+    if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
+        if [ ! -f `which rlwrap` ] ; then 
+            $AppInstall install readline-devel 
+            curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+            pushd /tmp/ 
+            tar -zxvf /tmp/readline-master.tar.gz  
+            cd readline-master 
+            ./configure 
+            make 
+            sudo make install 
+            popd
+        else
+            echo 'rlwrap already installed!'
+        fi
+    else
+        $AppInstall install -y rlwrap
+    fi 
 else # install node globally via binary
-  npm="npm"
-  if [ nodeInstalled == "false" ] ; then
-    nodeGlobalInstall
-  fi
-  # install apt-cygwin for individual cygwin commands
-  which $AppInstall > /dev/null 2>&1
-  if [ $? -eq 1 ] ; then
-    echo -e "installing apt-cyg from GitHub"
-    curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
-    chmod +x /usr/bin/apt-cyg
-  fi
-  $AppInstall install rlwrap
-  $AppInstall install ncurses # for clear command
-  $npm install eslint -g
-  $npm install js-beautify -g
+    npm="npm"
+    if [ nodeInstalled == "false" ] ; then
+      nodeGlobalInstall
+    fi
+    # install apt-cygwin for individual cygwin commands
+    which $AppInstall > /dev/null 2>&1
+    if [ $? -eq 1 ] ; then
+      echo -e "installing apt-cyg from GitHub"
+      curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
+      chmod +x /usr/bin/apt-cyg
+    fi
+    $AppInstall install rlwrap
+    $AppInstall install ncurses # for clear command
+    $npm install eslint -g
+    $npm install js-beautify -g
 fi
 
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
