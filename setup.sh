@@ -758,6 +758,9 @@ installBashCompletion
 # Use favorite VIM color scheme
 echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
 
+# Copy HTML tag folding vim script to .vim
+cp ~/dotfiles/html.vim ~/.vim
+
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
 echo "In the new shell, execute ~/dotfiles/.git_template/config.sh to finishing setting up git to auto-index ctags"
