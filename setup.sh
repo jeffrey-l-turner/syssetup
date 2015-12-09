@@ -21,26 +21,28 @@
 # setup some useful error handling functions
 #########################################################
  
+# shellcheck disable=SC2120 
 usage() {
- 	echo `basename $0`: ERROR: $* 1>&2
-        echo usage: './'`basename $0` ' (for interactive mode) '  1>&2
-        echo "cat `basename $0` | /bin/bash <or other sh-compatible shell> (for non-interactive mode)" 1>&2
+ 	echo "$(basename "$0")": ERROR: "$*" 1>&2
+        echo usage: './'"$(basename "$0")" ' (for interactive mode) '  1>&2
+        echo "cat $(basename "$0") | /bin/bash <or other sh-compatible shell> (for non-interactive mode)" 1>&2
  	exit 1
 }
  
 cleanup() {
     echo -e "cleaning up..."
 }
+
 error() {
  	cleanup
- 	echo `basename $0`: ERROR: $* 1>&2
+ 	echo "$(basename "$0")": ERROR: "$*" 1>&2
  	echo "shuting down... internal error or unable to connect to Internet" 1>&2
  	exit 2
 }
 
 interrupt () {
  	cleanup
- 	echo `basename $0`: INTERRUPTED: $* 1>&2
+ 	echo "$(basename "$0")": INTERRUPTED: "$*" 1>&2
  	echo "Cleaning up... removed files" 1>&2
  	exit 2
 }
@@ -49,12 +51,13 @@ trap error TERM
 trap interrupt INT  
  
 if  [ "$#" -ne 0 ]; then
+# shellcheck disable=SC2119 
     usage
 fi
 
 set -o errexit
 
-datetime=$(date +%Y%m%d%H%M%S)
+#datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
 nvmuse="v0.4.0" 
 # binary of node to use on Windows/Cygwin
@@ -70,10 +73,10 @@ vundle="https://github.com/gmarik/vundle.git"
 
 # location of pathogent specific plugins (using generally) 
 commandt="git://git.wincent.com/command-t.git" 
-libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
+#libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
 # location of git completion for bash
-gitcomplete="https://github.com/bobthecow/git-flow-completion.git" 
+#gitcomplete="https://github.com/bobthecow/git-flow-completion.git" 
  
 #########################################################################
 # ruby location for windows: http://rubyinstaller.org/downloads/archives
@@ -83,7 +86,7 @@ lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
-if [ -f `which git` ]; then
+if [ -f "$(which git)" ]; then
     gitInstalled="true"
 else
     gitInstalled="false"
@@ -108,7 +111,7 @@ installGit() {
 dotFilesCloned="false"
 cloneDotFiles(){
     if [ "$dotFilesCloned" == "false" ]; then
-        cd $HOME
+        cd "$HOME" || error "unable to cd $HOME"
         installGit
         if [ -d ./dotfiles/ ]; then
             rm -rf dotfiles.old
@@ -119,7 +122,7 @@ cloneDotFiles(){
         fi
         git clone $gitdotfiles
         if [ "${OS}" != "mac" ]; then
-            rm -rf $HOME/dotfiles/term_settings
+            rm -rf "$HOME/dotfiles/term_settings"
         fi
     fi
     dotFilesCloned="true"
@@ -144,7 +147,8 @@ installNVM (){
             fi
             echo "sourcing nvm.sh"
         fi 
-        source $HOME/.nvm/nvm.sh
+        # shellcheck disable=SC1090
+        source "$HOME/.nvm/nvm.sh"
         nvm install $nvmuse
         nvm use $nvmuse
         nvm alias default $nvmuse
@@ -159,9 +163,9 @@ installBashCompletion (){
             $AppInstall install bash-completion
             # set note on bash completion in ~/.bashrc_custom
             if [ "$?" -eq 0 ]; then
-                echo '# setup bash completion setup for shell' >> $HOME/.bashrc_custom
+                echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
-                echo '# setup bash completion not setup; must manually enable' >> $HOME/.bashrc_custom
+                echo '# setup bash completion not setup; must manually enable' >> "$HOME/.bashrc_custom"
             fi
         
             $AppInstall install bash-completion
@@ -172,9 +176,11 @@ installBashCompletion (){
             echo "bash completion not installaed on Cygwin"
         fi
         if [ "${OS}" == "mac" ]; then
-            echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> $HOME/.bashrc_custom
-            echo '       . `brew --prefix`/etc/bash_completion' >> $HOME/.bashrc_custom
-            echo 'fi' >> $HOME/.bashrc_custom
+            # shellcheck disable=SC2016,SC2129
+            echo 'if [ -f `brew --prefix`/etc/bash_completion ]; then' >> "$HOME/.bashrc_custom"
+            # shellcheck disable=SC2016,SC2129
+            echo '       . `brew --prefix`/etc/bash_completion' >> "$HOME/.bashrc_custom"
+            echo 'fi' >> "$HOME/.bashrc_custom"
         fi
     fi
     bashCompletion="true"
@@ -192,14 +198,15 @@ fi
 nodeGlobalInstall() {
     if [ "${OS}" == "cygwin" ]; then
       wget $winNode
-      msi=`echo $winNode | sed -e 's/.*\///'`
-      mv ${msi} /tmp
+      msi=$(echo $winNode | sed -e 's/.*\///')
+      mv "${msi}" /tmp
       echo "running msiexec.exe to install: ${msi}"
+      # shellcheck disable=SC2046,SC2006,SC2086
       run msiexec.exe /i `cygpath -d /tmp/$msi` 
       echo "restart system prior to installing rest of $0"
       #rm -f ${msi} 
     else
-      echo -e  "copying node files for version $nmuse... enter sudo password if prompted"
+      echo -e  "copying node files for version $nvmuse... enter sudo password if prompted"
       echo -e  "enter sudo password if prompted"
       echo -e " "
       if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
@@ -207,7 +214,7 @@ nodeGlobalInstall() {
           brew install node
       else
           installNVM
-          n=$(which node);n=${n%/bin/node}; chmod -R 755 $n/bin/*; sudo cp -r $n/{bin,lib,share} /usr/local
+          n=$(which node);n=${n%/bin/node}; chmod -R 755 "$n/bin/*"; sudo cp -r "$n/{bin,lib,share}" /usr/local
       fi
     fi
 }
@@ -217,70 +224,70 @@ nodeGlobalInstall() {
 # Get System Info
 ####################################################################
 shootProfile(){
-    OS=`lowercase \`uname\``
-    KERNEL=`uname -r`
-    MACH=`uname -m`
+    OS=$(lowercase "$(uname)")
+    KERNEL=$(uname -r)
+    MACH=$(uname -m)
 
     if [ "${OS}" == "darwin" ]; then
         OS="mac"
-        REV=`uname -r`
+        REV=$(uname -r)
         PSEUDONAME="Darwin"
         DistroBasedOn='BSD'
         AppInstall="brew "
         DIST="Apple OS X"
-    elif [ `echo "${OS}" | cut -b 1-6` == "cygwin" ]; then
+    elif [ "$(echo "${OS}" | cut -b 1-6)" == "cygwin" ]; then
         OS="cygwin"
         DIST="Windows POSIX"
-        REV=`uname -r`
-        PSEUDONAME=`uname`
+        REV=$(uname -r)
+        PSEUDONAME=$(uname)
         DistroBasedOn='POSIX'
         AppInstall="apt-cyg "
         gitInstalled="true"
     else
-        OS=`uname`
+        OS=$(uname)
 
         if [ "${OS}" = "Linux" ]; then
             if [ -f /etc/centos-release ]; then
                 DistroBasedOn='redhat'
-                DIST=`cat /etc/centos-release | sed 's/ *Linux.*//I'`
-                PSEUDONAME=`cat /etc/centos-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/centos-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(sed 's/ *Linux.*//I' /etc/centos-release)
+                PSEUDONAME=$(sed s/.*\(// /etc/centos-release | sed s/\)//)
+                REV=$(sed 's/.*release\ //' /etc/centos-release | sed s/\ .*//)
                 AppInstall="sudo yum "
             elif [ -f /etc/redhat-release ]; then
                 DistroBasedOn='redhat'
-                DIST=`cat /etc/redhat-release |sed s/\ release.*//`
-                PSEUDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+                DIST=$(sed 's/\ release.*//' /etc/redhat-release)
+                PSEUDONAME=$(sed s/.*\(// /etc/redhat-release | sed s/\)//)
+                REV=$(sed 's/.*release\ //' /etc/redhat-release | sed s/\ .*//)
                 AppInstall="sudo yum "
             elif [ -f /etc/SuSE-release ]; then
                 DistroBasedOn='SuSe'
-                PSEUDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
-                REV=`cat /etc/SuSE-release | tr "\n" ' ' | sed s/.*=\ //`
+                PSEUDONAME=$(tr "\n" ' ' </etc/SuSE-release | sed s/VERSION.*//)
+                REV=$(tr "\n" ' ' < /etc/SuSE-release | sed s/.*=\ //)
                 AppInstall="exit 2"
             elif [ -f /etc/mandrake-release ]; then
                 DistroBasedOn='Mandrake'
-                PSEUDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
-                REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
+                PSEUDONAME=$(sed 's/.*\(//' /etc/mandrake-release | sed s/\)//)
+                REV=$(sed 's/.*release\ //' /etc/mandrake-release | sed s/\ .*//)
                 AppInstall="exit 2"
             elif [ -f /etc/debian_version ]; then
                 DistroBasedOn='Debian'
                 if [ -f /etc/lsb-release ]; then
-                        DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
-                            PSEUDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
-                            REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+                        DIST=$(grep '^DISTRIB_ID' /etc/lsb-release | awk -F=  '{ print $2 }')
+                            PSEUDONAME=$(grep '^DISTRIB_CODENAME' /etc/lsb-release | awk -F=  '{ print $2 }')
+                            REV=$(grep '^DISTRIB_RELEASE' /etc/lsb-release | awk -F=  '{ print $2 }')
                 elif [ -f /etc/os-release ]; then
                     DistroBasedOn='Debian'
-                    DIST=`cat /etc/os-release | grep '^PRETTY_NAME' | awk -F=  '{ print $2 }'`
-                    REV=`cat /etc/os-release | grep '^VERSION_ID' | awk -F=  '{ print $2 }' | sed 's/\"//g'`
-                    PSEUDONAME=`grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }' | awk -F'\(' '{ print $2 }' | sed 's/)\"//'`
+                    DIST=$(grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }')
+                    REV=$(grep '^VERSION_ID' /etc/os-release | awk -F=  '{ print $2 }' | sed 's/\"//g')
+                    PSEUDONAME=$(grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }' | awk -F'\(' '{ print $2 }' | sed 's/)\"//')
                 fi
                 AppInstall="sudo apt-get "
             fi
             if [ -f /etc/UnitedLinux-release ]; then
-                DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
+                DIST="${DIST}[$(tr "\n" ' ' < /etc/UnitedLinux-release  | sed s/VERSION.*//)]"
             fi
-            OS=`lowercase $OS`
-            DistroBasedOn=`lowercase $DistroBasedOn`
+            OS=$(lowercase "$OS")
+            DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
 
     fi 
@@ -298,11 +305,11 @@ fi
 
 
 # Setup for config files using ssh:
-if [ ! -d $HOME/.ssh/ ]; then
-    mkdir $HOME/.ssh
+if [ ! -d "$HOME/.ssh/" ]; then
+    mkdir "$HOME/.ssh"
 fi 
-touch $HOME/.ssh/config 
-chmod 600 $HOME/.ssh/config
+touch "$HOME/.ssh/config" 
+chmod 600 "$HOME/.ssh/config"
 
 # These are functions to setup ssh keys for Heroku and GitHub:
 # The keys must still be registered with the respective accounts by the user
@@ -310,11 +317,11 @@ herokuKey="false"
 genHeroku(){
     echo -e '\t Generating Heroku Key (~/.ssh/heroku-rsa)'
     echo "Enter email address for Heroku key:"
-    read email;
-    ssh-keygen -t rsa -C "$email" -f $HOME/.ssh/heroku-rsa
+    read -r email;
+    ssh-keygen -t rsa -C "$email" -f "$HOME/.ssh/heroku-rsa"
     herokuKey="true"
     cloneDotFiles;
-    cat $HOME/dotfiles/ssh-config-heroku >> $HOME/.ssh/config
+    cat "$HOME/dotfiles/ssh-config-heroku" >> "$HOME/.ssh/config"
     echo "Note: you must still upload your key to your Heroku account!"
 }
 
@@ -322,11 +329,11 @@ githubKey="false"
 genGitHub(){
     echo -e '\t Generating GitHub Key (~/.ssh/github-rsa)'
     echo "Enter email address for GitHub key:"
-    read email;
-    ssh-keygen -t rsa -C "$email"  -f $HOME/.ssh/github-rsa
+    read -r email;
+    ssh-keygen -t rsa -C "$email"  -f "$HOME/.ssh/github-rsa"
     githubKey="true"
     cloneDotFiles;
-    cat $HOME/dotfiles/ssh-config-github >> $HOME/.ssh/config
+    cat "$HOME/dotfiles/ssh-config-github" >> "$HOME/.ssh/config"
     echo "Note: you must still upload your key to your GitHub profile!"
 }
 
@@ -364,19 +371,19 @@ shootProfile
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    `which xcode-select` -p
+    $(which xcode-select) -p
     if [ "$?" -eq 0 ]; then
-        echo "xcode version: `xcode-select --version` installed"
+        echo "xcode version: $(xcode-select --version) installed"
     else
         echo "xcode command line tools are not installed..." 
         echo "please install xcode before proceeding" 
         echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
         echo ""
         echo "Attempting to install xcode tools... please follow instructions to install and re-run $0"
-        `which xcode-select` --install
+        $(which xcode-select) --install
         exit 1
     fi
-    if [ ! -f `which brew` ]; then
+    if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         brew install ctags
     fi
@@ -388,6 +395,7 @@ cloneDotFiles
 #########################################################
 # setup colors for output 
 #########################################################
+# shellcheck disable=SC1090
 source "${HOME}/dotfiles/colordefs.sh"
 
 Black="$(color Black esc)"
@@ -434,13 +442,13 @@ printMenu(){
     cyan "KERNEL: $KERNEL"
     cyan "MACH: $MACH"
     if [ "${nodeInstalled}" = "true" ] ; then 
-        echo "node installed at: " `which node`
+        echo "node installed at: " "$(which node)"
         if [ -e /usr/local/bin/node ] ; then
             cyan "and node already globally installed at: /usr/local/bin/node"
             cyan "Will use node version: $nvmuse" 
         elif [ "${OS}" == "cygwin" ] ; then
 	    cyan "nvm will not be installed on Windows/Cygwin"
-            cyan  "node version:" `node --version` 
+            cyan  "node version:" "$(node --version)"
             cyan  "globally installed on system"
         else
             cyan "node is not globally installed. To globally install during setup, press 4 below"
@@ -496,7 +504,7 @@ printMenu(){
             white "\t4) Install node version ${nvmuse} globally "
         fi
     fi
-    if [ -f `which mongod` ] && [ "${installMongo}" == "false" ]; then
+    if [ -f "$(which mongod)" ] && [ "${installMongo}" == "false" ]; then
         cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
     elif [ "${installMongo}" = "true" ]; then
         yellow "\t5) MongoDB will be (re-)installed; Select to toggle" 
@@ -509,8 +517,9 @@ printMenu(){
     red "Press ^C, q or 6 if the above system information is not correct or you wish to abort installation"
     white  "------------------------------------------------------------------------------------------------- "
     green "Press press 7, c, or y to proceed"
-    read option;
-    while [[ $option -gt 12 || ! $(echo $option | grep '^[1-6qQyc]$') ]]
+    read -r option;
+    # shellcheck disable=SC2143
+    while [[ $option -gt 12 || ! "$(echo "$option" | grep '^[1-6qQyc]$')" ]]
     do
         printMenu
     done
@@ -542,7 +551,8 @@ runOption(){
         6) setFlags
     esac 
     echo "Press return to continue"
-    read x
+    # shellcheck disable=SC2034
+    read -r x
     printMenu
 }
 
@@ -585,21 +595,20 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
     # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
     # http://jshint.com/
     echo "use sudo password for following if prompted"
-    sudo $npm install -g jshint
-    sudo $npm install -g jslint
-    sudo $npm install -g eslint
-    sudo $npm install -g js-beautify 
-    sudo $npm install repl.history
+    #sudo $npm install -g jshint
+    #sudo $npm install -g jslint
+    sudo "$npm" install -g eslint js-beautify jsonlint
+    sudo "$npm" install repl.history
   
     # Install rlwrap to provide libreadline features with node
     # See: http://nodejs.org/api/repl.html#repl_repl
     if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-        if [ ! -f `which rlwrap` ] ; then 
+        if [ ! -f "$(which rlwrap)" ] ; then 
             $AppInstall install readline-devel 
             curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
             pushd /tmp/ 
             tar -zxvf /tmp/readline-master.tar.gz  
-            cd readline-master 
+            cd readline-master || error "unable to cd to readline-master"
             ./configure 
             make 
             sudo make install 
@@ -612,11 +621,11 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
     fi 
 else # install node globally via binary
     npm="npm"
-    if [ nodeInstalled == "false" ] ; then
+    if [ $nodeInstalled == "false" ] ; then
       nodeGlobalInstall
     fi
     # install apt-cygwin for individual cygwin commands
-    which $AppInstall > /dev/null 2>&1
+    which "$AppInstall" > /dev/null 2>&1
     if [ $? -eq 1 ] ; then
       echo -e "installing apt-cyg from GitHub"
       curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
@@ -624,8 +633,7 @@ else # install node globally via binary
     fi
     $AppInstall install rlwrap
     $AppInstall install ncurses # for clear command
-    $npm install eslint -g
-    $npm install js-beautify -g
+    $npm install -g eslint js-beautify jsonlint
 fi
 
 #Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
@@ -665,23 +673,23 @@ if [ "${editorInstall}" == "emacs" ] ; then
 elif [ "${OS}" != "cygwin" ] ; then
 # Install VIM configuration files including vundle and colorschemes
     # These use configuration specified in dotfiles/.vimrc:
-    if [ -d $HOME/.vim/bundle ]; then
-        rm -rf $HOME/.vim/bundle 
+    if [ -d "$HOME/.vim/bundle" ]; then
+        rm -rf "$HOME/.vim/bundle"
     fi
-    mkdir -p $HOME/.vim/bundle
-    git clone $vundle $HOME/.vim/bundle/vundle
+    mkdir -p "$HOME/.vim/bundle"
+    git clone $vundle "$HOME/.vim/bundle/vundle"
 fi
 
-cd $HOME
+cd "$HOME" || error unable to cd
 
-ln $lnopts dotfiles/.screenrc $HOME
-ln $lnopts dotfiles/.bash_profile $HOME
-ln $lnopts dotfiles/.bashrc $HOME
-ln $lnopts dotfiles/.jshintrc $HOME
-ln $lnopts dotfiles/.bash_logout $HOME
+ln "${lnopts}" dotfiles/.screenrc "$HOME"
+ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+ln "${lnopts}" dotfiles/.bashrc "$HOME"
+ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+ln "${lnopts}" dotfiles/.bash_logout "$HOME"
 
 # append to custom rc file rather than linking -- this is changed from Balaji's script
-cat dotfiles/.bashrc_custom >> $HOME/.bashrc_custom
+cat dotfiles/.bashrc_custom >> "$HOME/.bashrc_custom"
 
 # Select whether to link vim or emacs dotfiles:
 if [ "${editorInstall}" == "emacs" ] ; then
@@ -698,12 +706,13 @@ elif [ "${editorInstall}" == "vim" ] ; then
         fi 
 
     # setup pathogen specific installs by using git clones
-        cd "${HOME}/.vim" 
+        cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
+        # shellcheck disable=SC1090
         source "${HOME}/dotfiles/.git_template/config.sh"
         git init
         git submodule add "${commandt}" bundle/command-t 
-        yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/`` \& use git pull to update"
-        cd "${HOME}"
+        yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
+        cd "${HOME}" || error "unable to cd ${HOME}"
 
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
@@ -724,8 +733,8 @@ fi
 
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
-    mkdir -p $HOME/.term_settings
-    ln $lnopts dotfiles/term_settings/* $HOME/.term_settings
+    mkdir -p "$HOME/.term_settings"
+    ln "$lnopts" dotfiles/term_settings/* "$HOME/.term_settings"
 else
     rm -rf dotfiles/term_settings/
 fi 
@@ -733,6 +742,7 @@ fi
 #Copy over Chrome debugger environment for MAC usage
 if [ "${OS}" == "mac" ]; then
     echo 'export CHROME_BIN=/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary' >> ~/.bashrc_custom
+    # shellcheck disable=SC2016 
     echo 'DebugBrowser="${CHROME_BIN}"'  >> ~/.bashrc_custom
 # add Visual Studio config for git
     git config --global core.autocrlf input
@@ -756,7 +766,7 @@ fi
 installBashCompletion 
 
 # Use favorite VIM color scheme
-echo ":colorscheme refactor" >> $HOME/.vimrc # add my preferred colorscheme to end of .vimrc
+echo ":colorscheme refactor" >> "$HOME/.vimrc" # add my preferred colorscheme to end of .vimrc
 
 # Copy HTML tag folding vim script to .vim
 cp ~/dotfiles/html.vim ~/.vim
