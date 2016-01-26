@@ -381,6 +381,8 @@ if [ "${OS}" == "mac" ]; then
         echo ""
         echo "Attempting to install xcode tools... please follow instructions to install and re-run $0"
         $(which xcode-select) --install
+        echo "Make sure your xcode tools are not a command line instance. Set them to the correct directory via: sudo xcode-select -s <correct-location>"
+        echo "Typicall, this happens when you are using the beta version of Xcode.\n...please follow instructions to install and re-run $0"
         exit 1
     fi
     if [ ! -f "$(which brew)" ]; then
