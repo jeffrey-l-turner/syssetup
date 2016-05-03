@@ -55,8 +55,6 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
-set -o errexit
-
 #datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
 nvmuse="v0.4.0" 
@@ -299,6 +297,9 @@ shootProfile(){
     readonly KERNEL
     readonly MACH
 }
+
+set -o errexit
+
 if [ "${gitInstalled}" != "true" ] ; then 
         installGit;
 fi
