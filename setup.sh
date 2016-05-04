@@ -141,7 +141,7 @@ installNVM (){
             fi
         fi 
         if [ "${OS}" == "mac" ]; then
-            $AppInstall  install openssl
+            $AppInstall install openssl
         fi
         echo "sourcing nvm.sh"
         # shellcheck disable=SC1090
@@ -366,7 +366,7 @@ InstallMongo(){
 # Load menu in interactive mode
 shootProfile
 
-# If using Mac OS, then check if xcode is installed, then install brew & ctags
+# If using Mac OS, then check if xcode is installed, then install brew & ctags, git, bash-completion
 if [ "${OS}" == "mac" ]; then
     $(which xcode-select) -p
     if [ "$?" -eq 0 ]; then
@@ -384,8 +384,10 @@ if [ "${OS}" == "mac" ]; then
     fi
     if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew install ctags
     fi
+    brew install ctags git bash-completion
+    echo "Installing git and bash-completion via brew since Apple's"
+    echo "git has compatibility problems with git-flow-completion"
 fi
 
 # Put dotfiles in place if not already there
@@ -590,36 +592,32 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   # moving set -u since nvm installation has undefined variables
   set -u # exit if undefined variables
   
-    # Set npm to local version and then use sudo for global installation
-    npm="$HOME/.nvm/$nvmuse/bin/npm"
+  # Set npm to local version and then use sudo for global installation
+  npm="$HOME/.nvm/$nvmuse/bin/npm"
     
-    # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
-    # http://jshint.com/
-    echo "use sudo password for following if prompted"
-    #sudo $npm install -g jshint
-    #sudo $npm install -g jslint
-    sudo "$npm" install -g eslint js-beautify jsonlint
-    sudo "$npm" install repl.history
+  echo "use sudo password for following if prompted"
+  sudo "$npm" install -g eslint js-beautify jsonlint
+  sudo "$npm" install repl.history
   
-    # Install rlwrap to provide libreadline features with node
-    # See: http://nodejs.org/api/repl.html#repl_repl
-    if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-        if [ ! -f "$(which rlwrap)" ] ; then 
-            $AppInstall install readline-devel 
-            curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
-            pushd /tmp/ 
-            tar -zxvf /tmp/readline-master.tar.gz  
-            cd readline-master || error "unable to cd to readline-master"
-            ./configure 
-            make 
-            sudo make install 
-            popd
+  # Install rlwrap to provide libreadline features with node
+  # See: http://nodejs.org/api/repl.html#repl_repl
+  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
+      if [ ! -f "$(which rlwrap)" ] ; then 
+          $AppInstall install readline-devel 
+          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+          pushd /tmp/ 
+          tar -zxvf /tmp/readline-master.tar.gz  
+          cd readline-master || error "unable to cd to readline-master"
+          ./configure 
+          make 
+          sudo make install 
+          popd
         else
-            echo 'rlwrap already installed!'
+          echo 'rlwrap already installed!'
         fi
-    else
-        $AppInstall install -y rlwrap
-    fi 
+  else
+      $AppInstall install -y rlwrap
+  fi 
 else # install node globally via binary
     npm="npm"
     if [ $nodeInstalled == "false" ] ; then
