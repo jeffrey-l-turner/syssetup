@@ -141,6 +141,9 @@ installNVM (){
             fi
             echo "sourcing nvm.sh"
         fi 
+        if [ "${OS}" == "mac" ]; then
+            $AppInstall  install openssl
+        fi
         # shellcheck disable=SC1090
         source "$HOME/.nvm/nvm.sh"
         nvm install $nvmuse
@@ -518,11 +521,11 @@ printMenu(){
     green "Press press 7, c, or y to proceed"
     read -r option;
     # shellcheck disable=SC2143
-    while [[ $option -gt 12 || ! "$(echo "$option" | grep '^[1-6qQyc]$')" ]]
+    while [[ $option -gt 12 || ! "$(echo "$option" | grep '^[1-7qQyc]$')" ]]
     do
         printMenu
     done
-    if [[ "$option" == "6" || "$option" == "c" || "$option" == "y" ]]; then
+    if [[ "$option" == "7" || "$option" == "c" || "$option" == "y" ]]; then
         echo "Starting installation..."
         echo 
         setFlags
