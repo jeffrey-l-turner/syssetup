@@ -139,11 +139,11 @@ installNVM (){
                echo "nvm installation command failed"; 
                exit 1; 
             fi
-            echo "sourcing nvm.sh"
         fi 
         if [ "${OS}" == "mac" ]; then
             $AppInstall  install openssl
         fi
+        echo "sourcing nvm.sh"
         # shellcheck disable=SC1090
         source "$HOME/.nvm/nvm.sh"
         nvm install $nvmuse
