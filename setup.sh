@@ -35,7 +35,6 @@ cleanup() {
 
 error() {
  	cleanup
-        echo $1
  	echo "$(basename "$0")": ERROR: "$*" 1>&2
  	echo "shuting down... internal error or unable to connect to Internet" 1>&2
  	exit 2
