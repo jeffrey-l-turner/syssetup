@@ -297,8 +297,6 @@ shootProfile(){
     readonly MACH
 }
 
-set -o errexit
-
 if [ "${gitInstalled}" != "true" ] ; then 
         installGit;
 fi
@@ -393,6 +391,8 @@ fi
 
 # Put dotfiles in place if not already there
 cloneDotFiles
+
+set -o errexit
 
 #########################################################
 # setup colors for output 
