@@ -157,15 +157,16 @@ bashCompletion="false"
 installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
-            $AppInstall install bash-completion
             # set note on bash completion in ~/.bashrc_custom
+            echo "Installing git and bash-completion via brew since Apple's"
+            echo "git has compatibility problems with git-flow-completion"
+            $AppInstall install git 
+            $AppInstall install bash-completion
             if [ "$?" -eq 0 ]; then
                 echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
                 echo '# setup bash completion not setup; must manually enable' >> "$HOME/.bashrc_custom"
             fi
-        
-            $AppInstall install bash-completion
         fi
         if [ "${OS}" == "cygwin" ]; then
             # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
@@ -366,7 +367,7 @@ InstallMongo(){
 # Load menu in interactive mode
 shootProfile
 
-# If using Mac OS, then check if xcode is installed, then install brew & ctags, git, bash-completion
+# If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
     $(which xcode-select) -p
     if [ "$?" -eq 0 ]; then
@@ -385,9 +386,7 @@ if [ "${OS}" == "mac" ]; then
     if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
-    brew install ctags git bash-completion
-    echo "Installing git and bash-completion via brew since Apple's"
-    echo "git has compatibility problems with git-flow-completion"
+    brew install ctags 
 fi
 
 # Put dotfiles in place if not already there
