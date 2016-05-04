@@ -297,12 +297,9 @@ shootProfile(){
     readonly MACH
 }
 
-set -o errexit
-
 if [ "${gitInstalled}" != "true" ] ; then 
         installGit;
 fi
-
 
 # Setup for config files using ssh:
 if [ ! -d "$HOME/.ssh/" ]; then
@@ -558,6 +555,8 @@ runOption(){
     printMenu
 }
 
+# set to exit on any errors before non-interactive mode check
+set -o errexit
 
 # Only have susccesfully used following as means to test for interactivity
 tty -s
