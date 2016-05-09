@@ -711,6 +711,8 @@ elif [ "${editorInstall}" == "vim" ] ; then
         git submodule add "${commandt}" bundle/command-t 
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
         cd "${HOME}" || error "unable to cd ${HOME}"
+        git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
+        yellow "Installing ctrl-p..."
 
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
