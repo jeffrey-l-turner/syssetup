@@ -184,6 +184,9 @@ installBashCompletion (){
     bashCompletion="true"
 }
  
+installShellCheck (){
+    $AppInstall install shellcheck
+}
 
 which node > /dev/null 2>&1 # for Cygwin compatibility
 if [ $? -eq 0 ]; then
@@ -766,6 +769,9 @@ fi
 
 # Install Bash and Git Flow Completion:
 installBashCompletion 
+
+# Install Shell Check
+installShellCheck 
 
 # Use favorite VIM color scheme
 echo ":colorscheme refactor" >> "$HOME/.vimrc" # add my preferred colorscheme to end of .vimrc
