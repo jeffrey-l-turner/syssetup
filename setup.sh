@@ -141,7 +141,7 @@ installNVM (){
             fi
         fi 
         if [ "${OS}" == "mac" ]; then
-            $AppInstall  install openssl
+            $AppInstall install openssl
         fi
         echo "sourcing nvm.sh"
         # shellcheck disable=SC1090
@@ -157,15 +157,16 @@ bashCompletion="false"
 installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
-            $AppInstall install bash-completion
             # set note on bash completion in ~/.bashrc_custom
+            echo "Installing git and bash-completion via brew since Apple's"
+            echo "git has compatibility problems with git-flow-completion"
+            $AppInstall install git 
+            $AppInstall install bash-completion
             if [ "$?" -eq 0 ]; then
                 echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
                 echo '# setup bash completion not setup; must manually enable' >> "$HOME/.bashrc_custom"
             fi
-        
-            $AppInstall install bash-completion
         fi
         if [ "${OS}" == "cygwin" ]; then
             # Download and place git-flow-completion.bash in %CYGWIN_INSTALLATION_DIR%\etc\bash_completion.d
@@ -301,7 +302,6 @@ if [ "${gitInstalled}" != "true" ] ; then
         installGit;
 fi
 
-
 # Setup for config files using ssh:
 if [ ! -d "$HOME/.ssh/" ]; then
     mkdir "$HOME/.ssh"
@@ -385,8 +385,8 @@ if [ "${OS}" == "mac" ]; then
     fi
     if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew install ctags
     fi
+    brew install ctags 
 fi
 
 # Put dotfiles in place if not already there
@@ -558,6 +558,8 @@ runOption(){
     printMenu
 }
 
+# set to exit on any errors before non-interactive mode check
+set -o errexit
 
 # Only have susccesfully used following as means to test for interactivity
 tty -s
@@ -591,36 +593,32 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   # moving set -u since nvm installation has undefined variables
   set -u # exit if undefined variables
   
-    # Set npm to local version and then use sudo for global installation
-    npm="$HOME/.nvm/$nvmuse/bin/npm"
+  # Set npm to local version and then use sudo for global installation
+  npm="$HOME/.nvm/$nvmuse/bin/npm"
     
-    # Install jshint, eslint, jslint and beautify to allow checking of JS code within emacs and node history (locally)
-    # http://jshint.com/
-    echo "use sudo password for following if prompted"
-    #sudo $npm install -g jshint
-    #sudo $npm install -g jslint
-    sudo "$npm" install -g eslint js-beautify jsonlint
-    sudo "$npm" install repl.history
+  echo "use sudo password for following if prompted"
+  sudo "$npm" install -g eslint js-beautify jsonlint
+  sudo "$npm" install repl.history
   
-    # Install rlwrap to provide libreadline features with node
-    # See: http://nodejs.org/api/repl.html#repl_repl
-    if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-        if [ ! -f "$(which rlwrap)" ] ; then 
-            $AppInstall install readline-devel 
-            curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
-            pushd /tmp/ 
-            tar -zxvf /tmp/readline-master.tar.gz  
-            cd readline-master || error "unable to cd to readline-master"
-            ./configure 
-            make 
-            sudo make install 
-            popd
+  # Install rlwrap to provide libreadline features with node
+  # See: http://nodejs.org/api/repl.html#repl_repl
+  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
+      if [ ! -f "$(which rlwrap)" ] ; then 
+          $AppInstall install readline-devel 
+          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+          pushd /tmp/ 
+          tar -zxvf /tmp/readline-master.tar.gz  
+          cd readline-master || error "unable to cd to readline-master"
+          ./configure 
+          make 
+          sudo make install 
+          popd
         else
-            echo 'rlwrap already installed!'
+          echo 'rlwrap already installed!'
         fi
-    else
-        $AppInstall install -y rlwrap
-    fi 
+  else
+      $AppInstall install -y rlwrap
+  fi 
 else # install node globally via binary
     npm="npm"
     if [ $nodeInstalled == "false" ] ; then
@@ -715,6 +713,8 @@ elif [ "${editorInstall}" == "vim" ] ; then
         git submodule add "${commandt}" bundle/command-t 
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
         cd "${HOME}" || error "unable to cd ${HOME}"
+        git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
+        yellow "Installing ctrl-p..."
 
     # Warn user that non-interactive vim will show and to wait for process to complete
         echo " "
