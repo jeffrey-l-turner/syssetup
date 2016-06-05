@@ -684,11 +684,22 @@ fi
 
 cd "$HOME" || error unable to cd
 
-ln "${lnopts}" dotfiles/.screenrc "$HOME"
-ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-ln "${lnopts}" dotfiles/.bashrc "$HOME"
-ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+if [ "${OS}" == "mac" ]; then
+    set +o errexit
+    ln -si dotfiles/.screenrc "$HOME"
+    ln -si dotfiles/.bash_profile "$HOME"
+    ln -si dotfiles/.bashrc "$HOME"
+    ln -si dotfiles/.jshintrc "$HOME"
+    ln -si dotfiles/.bash_logout "$HOME"
+    set -o errexit
+else
+    ln "${lnopts}" dotfiles/.screenrc "$HOME"
+    ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+    ln "${lnopts}" dotfiles/.bashrc "$HOME"
+    ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+    ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+fi
+
 
 # append to custom rc file rather than linking -- this is changed from Balaji's script
 cat dotfiles/.bashrc_custom >> "$HOME/.bashrc_custom"
@@ -738,7 +749,7 @@ fi
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
     mkdir -p "$HOME/.term_settings"
-    ln "$lnopts" dotfiles/term_settings/* "$HOME/.term_settings"
+    ln -si dotfiles/term_settings/* "$HOME/.term_settings"
 else
     rm -rf dotfiles/term_settings/
 fi 
