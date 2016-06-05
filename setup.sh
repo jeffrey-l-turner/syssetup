@@ -57,7 +57,7 @@ fi
 
 #datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="4.4.3" 
+nvmuse="v4.4.3"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -595,12 +595,13 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   set -u # exit if undefined variables
   
   # Set npm to local version and then use sudo for global installation
-  npm="$HOME/.nvm/$nvmuse/bin/npm"
+  npm="$HOME/.nvm/versions/node/$nvmuse/bin/npm"
+
     
   echo "use sudo password for following if prompted"
   sudo "$npm" install -g eslint js-beautify jsonlint
   sudo "$npm" install repl.history
-  
+
   # Install rlwrap to provide libreadline features with node
   # See: http://nodejs.org/api/repl.html#repl_repl
   if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
