@@ -708,6 +708,7 @@ cat dotfiles/.bashrc_custom >> "$HOME/.bashrc_custom"
 if [ "${editorInstall}" == "emacs" ] ; then
         ln -sf dotfiles/.emacs.d .  
 elif [ "${editorInstall}" == "vim" ] ; then
+    set +o errexit
     if [ "${OS}" != "cygwin" ] ; then 
         rm -f "${HOME}/.vimrc"
         cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
@@ -744,6 +745,7 @@ elif [ "${editorInstall}" == "vim" ] ; then
         echo "export TERM=cygwin" >> ~/.bashrc_custom
         echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
     fi
+    set -o errexit
 fi
 
 #If using Mac, copy terminal settings files over to home as well
