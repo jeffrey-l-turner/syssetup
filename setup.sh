@@ -124,33 +124,31 @@ cloneDotFiles(){
 
 nvmInstalled="false"
 installNVM (){
-    if [ "$nvmInstalled" == "false" ]; then
+    set +o errexit # nvm shell scripts have a habit of return non-zero error codes upon success
+    if [ "$nvmInstalled" = "false" ]; then
         # Install nvm: node-version manager
         # https://github.com/creationix/nvm
         # nvm locations have frequently changed
-        # using v0.17.0 currently from githubusercontent:
-        # too many problems with git usage on following:
-        # curl https://raw.githubusercontent.com/creationix/nvm/v0.17.0/install.sh | bash 
         # using clone and manual installation:
         if [ ! -d ~/.nvm/ ]; then
-            git clone git://github.com/creationix/nvm.git ~/.nvm
+            git clone git://github.com/creationix/nvm.git "$HOME/.nvm"
             # Load nvm and install latest production node
             if [ "$?" -ne 0 ]; then 
                echo "nvm installation command failed"; 
                exit 1; 
             fi
         fi 
-        if [ "${OS}" == "mac" ]; then
+        if [ "${OS}" = "mac" ]; then
             $AppInstall install openssl
         fi
-        echo "sourcing nvm.sh"
         # shellcheck disable=SC1090
-        source "$HOME/.nvm/nvm.sh"
+        . "$HOME/.nvm/nvm.sh"
         nvm install $nvmuse
         nvm use $nvmuse
         nvm alias default $nvmuse
     fi 
     nvmInstalled="true"
+    set -o errexit 
 }
 
 bashCompletion="false"
