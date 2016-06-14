@@ -792,6 +792,12 @@ echo ":colorscheme refactor" >> "$HOME/.vimrc" # add my preferred colorscheme to
 # Copy HTML tag folding vim script to .vim
 cp ~/dotfiles/html.vim ~/.vim
 
+# Copy git template files for ctags to home dir
+cp -R ~/dotfiles/.git_template/ "${HOME}/.git_template"
+
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
-echo "In the new shell, execute ~/dotfiles/.git_template/config.sh to finishing setting up git to auto-index ctags"
+echo "Copy appropriate config file (AngularJS, etc) from within ~/.git_template/ to ~/.git_template/config"
+echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
+echo "Then execute: git config --global init.templatedir '~/.git_template'"
+
