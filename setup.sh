@@ -64,6 +64,7 @@ winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
 # originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
+# change ~/dotfiles/.git/config to above url if pushing/pulling from that repo
 gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
 
 # location of vundle on Git
@@ -795,6 +796,7 @@ cp ~/dotfiles/html.vim ~/.vim
 # Copy git template files for ctags to home dir
 cp -R ~/dotfiles/.git_template/ "${HOME}/.git_template"
 
+echo "This script automatically installed ${gitdotfiles} to ~/dotfiles. These files can be used with Docker shell" 
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
 echo "Copy appropriate config file (AngularJS, React, Flow, etc) from within ~/.git_template/ to ~/.git_template/config"
