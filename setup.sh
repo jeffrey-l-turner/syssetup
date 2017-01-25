@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to setup headless node system as general shell 
-# on *nix and Cygwin systems
+# on *nix 
 #########################################################
 #   Script Requirements
 #
@@ -57,7 +57,7 @@ fi
 
 #datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v4.4.3"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v6.8.3"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -797,7 +797,7 @@ cp -R ~/dotfiles/.git_template/ "${HOME}/.git_template"
 
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
-echo "Copy appropriate config file (AngularJS, etc) from within ~/.git_template/ to ~/.git_template/config"
+echo "Copy appropriate config file (AngularJS, React, Flow, etc) from within ~/.git_template/ to ~/.git_template/config"
 echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
 echo "Then execute: git config --global init.templatedir '~/.git_template'"
 
