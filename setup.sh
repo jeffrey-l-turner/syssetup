@@ -57,7 +57,7 @@ fi
 
 #datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v6.8.3"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v6.10.1"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -722,13 +722,13 @@ elif [ "${editorInstall}" == "vim" ] ; then
         fi 
 
     # setup pathogen specific installs by using git clones
+    # note: these should installed on ~/vimfiles on Windows...
         cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
         # shellcheck disable=SC1090
         source "${HOME}/dotfiles/.git_template/config.sh"
         git init
         git submodule add "${commandt}" bundle/command-t 
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
-        cd "${HOME}" || error "unable to cd ${HOME}"
         git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
         yellow "Installing ctrl-p..."
 
