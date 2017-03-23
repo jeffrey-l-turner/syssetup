@@ -30,7 +30,8 @@ usage() {
 }
  
 cleanup() {
-    echo -e "cleaning up..."
+    datetime=$(date +%Y%m%d%H%M%S)
+    echo -e "cleaning up... at: ${datetime}"
 }
 
 error() {
@@ -55,9 +56,8 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
-#datetime=$(date +%Y%m%d%H%M%S)
 # Version of Node to use:
-nvmuse="v6.10.1"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v7.7.4"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -425,10 +425,10 @@ cyan() { echo -e "${Cyan}$*${Color_Off}"; }
 white() { echo -e "${White}$*${Color_Off}"; }
 
 # setup ln options for dotfile linking
-if [ "${OS}" == "mac" ]; then
-    lnopts="-si "
+if [ "${OS}" == "mac" ] || [ "${DistroBasedOn}" = 'redhat' ]; then
+    lnopts="-si"
 else
-    lnopts="-sb "
+    lnopts="-sb"
 fi
 
 ####################################################################
@@ -509,13 +509,21 @@ printMenu(){
             white "\t4) Install node version ${nvmuse} globally "
         fi
     fi
-    if [ -f "$(which mongod)" ] && [ "${installMongo}" == "false" ]; then
-        cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
-    elif [ "${installMongo}" = "true" ]; then
-        yellow "\t5) MongoDB will be (re-)installed; Select to toggle" 
+
+    set +o errexit
+    whereMongo=$(which mongod 2>&1) 
+    if [ $? -eq 0 ]; then
+        if [ -f "$whereMongo" ] && [ "${installMongo}" == "false" ]; then
+            cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
+        elif [ "${installMongo}" = "true" ]; then
+            yellow "\t5) MongoDB will be (re-)installed; Select to toggle" 
+        else
+            white "\t5) MongoDB not currently installed; Select to install" 
+        fi
     else
-        white "\t5) MongoDB not currently installed; Select to install" 
+        white "\t5) MongoDB not found; Select to install" 
     fi
+    set -o errexit
     red "\t6) Exit Now!"
     green "\t7) Continue Setup"
     echo -e " "
@@ -600,9 +608,12 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   npm="$HOME/.nvm/versions/node/$nvmuse/bin/npm"
 
     
-  echo "use sudo password for following if prompted"
-  sudo "$npm" install -g eslint js-beautify jsonlint
-  sudo "$npm" install repl.history
+  if [ "$nvmInstalled" = "false" ]; then
+    echo "use sudo password for following if prompted"
+    sudo "$npm" install -g eslint js-beautify jsonlint repl.history
+  else
+    "$npm" install -g eslint js-beautify jsonlint repl.history
+  fi
 
   # Install rlwrap to provide libreadline features with node
   # See: http://nodejs.org/api/repl.html#repl_repl
@@ -688,11 +699,11 @@ cd "$HOME" || error unable to cd
 
 if [ "${OS}" == "mac" ]; then
     set +o errexit
-    ln -si dotfiles/.screenrc "$HOME"
-    ln -si dotfiles/.bash_profile "$HOME"
-    ln -si dotfiles/.bashrc "$HOME"
-    ln -si dotfiles/.jshintrc "$HOME"
-    ln -si dotfiles/.bash_logout "$HOME"
+    ln "${lnopts}" dotfiles/.screenrc "$HOME"
+    ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+    ln "${lnopts}" dotfiles/.bashrc "$HOME"
+    ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+    ln "${lnopts}" dotfiles/.bash_logout "$HOME"
     set -o errexit
 else
     ln "${lnopts}" dotfiles/.screenrc "$HOME"
@@ -753,7 +764,7 @@ fi
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
     mkdir -p "$HOME/.term_settings"
-    ln -si dotfiles/term_settings/* "$HOME/.term_settings"
+    ln "${lnopts}" dotfiles/term_settings/* "$HOME/.term_settings"
 else
     rm -rf dotfiles/term_settings/
 fi 
