@@ -282,12 +282,20 @@ shootProfile(){
                     PSEUDONAME=$(grep '^PRETTY_NAME' /etc/os-release | awk -F=  '{ print $2 }' | awk -F'\(' '{ print $2 }' | sed 's/)\"//')
                 fi
                 AppInstall="sudo apt-get "
-            fi
-            if [ -f /etc/UnitedLinux-release ]; then
+            elif [ -f /etc/UnitedLinux-release ]; then
                 DIST="${DIST}[$(tr "\n" ' ' < /etc/UnitedLinux-release  | sed s/VERSION.*//)]"
             fi
+
+            if [ "${DIST}" = "" ] && [ -f /etc/os-release ]; then # catch all for Fedora based... incl. amazon
+                DIST="$(grep -i ^NAME /etc/os-release | sed  s/NAME=//i | sed s/\"//g )"
+                REV="$(grep -i '^VERSION=' /etc/os-release | sed  s/version=//i | sed s/\"//g )"
+                DistroBasedOn='RHEL Fedora'
+                PSEUDONAME="$(grep -i '^ID=' /etc/os-release | sed  s/id=//i | sed s/\"//g )"
+                AppInstall="sudo yum "
+            fi
+
+            DistroBasedOn=$(lowercase "${DistroBasedOn}")
             OS=$(lowercase "$OS")
-            DistroBasedOn=$(lowercase $DistroBasedOn)
         fi
 
     fi 
