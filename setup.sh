@@ -57,7 +57,7 @@ if  [ "$#" -ne 0 ]; then
 fi
 
 # Version of Node to use:
-nvmuse="v7.7.4"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v6.10.1"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
