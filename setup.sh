@@ -814,7 +814,6 @@ installShellCheck
 # Use favorite VIM color scheme
 mkdir -p "${HOME}/.vim/colors"
 cp ~/dotfiles/neon-custom.vim "${HOME}/vim/colors/"
-echo ":colorscheme neon-custom" >> "${HOME}/.vimrc" # add my preferred colorscheme to end of .vimrc
 
 # Copy HTML tag folding vim script to .vim
 cp ~/dotfiles/html.vim ~/.vim
