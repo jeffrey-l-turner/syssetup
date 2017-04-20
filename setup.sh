@@ -133,7 +133,7 @@ installNVM (){
         # using clone and manual installation:
         if [ ! -d ~/.nvm/ ]; then
             # Load nvm and install latest production node
-            if git clone git://github.com/creationix/nvm.git "$HOME/.nvm" ; then 
+            if ! git clone git://github.com/creationix/nvm.git "$HOME/.nvm" ; then 
                echo "nvm installation command failed"; 
                exit 1; 
             fi
@@ -377,7 +377,7 @@ shootProfile
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    if $(which xcode-select) -p; then
+    if $(which xcode-select) -p ; then
         echo "xcode version: $(xcode-select --version) installed"
     else
         echo "xcode command line tools are not installed..." 
