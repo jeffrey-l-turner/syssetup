@@ -5,16 +5,19 @@
 #   Script Requirements
 #
 #   Programs:
-#	curl
-#	sed
-#	tail
-#	basename
-#	rm
-#	mv
-#	wc
-#	cat
-#       wget
-#       echo
+#     curl
+#     sed
+#     tail
+#     basename
+#     date
+#     rm
+#     mv
+#     jwc
+#     cat
+#     wget
+#     echo
+#     git
+#     xcode-select # if on MacOS
 #########################################################
  
 #########################################################
@@ -730,6 +733,12 @@ elif [ "${editorInstall}" == "vim" ] ; then
         rm -f "${HOME}/.vimrc"
         cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
 
+        # install pathogen
+        mkdir -p "${HOME}/.vim/autoload"
+        mkdir -p "${HOME}/.vim/bundle"
+        curl -LSso "${HOME}/.vim/autoload/pathogen.vim" https://tpo.pe/pathogen.vim
+
+
         # setup vim on CentOS
         if [ "${DIST}" == "CentOS" ] ; then
             $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
@@ -803,7 +812,9 @@ installBashCompletion
 installShellCheck 
 
 # Use favorite VIM color scheme
-echo ":colorscheme refactor" >> "$HOME/.vimrc" # add my preferred colorscheme to end of .vimrc
+mkdir -p "${HOME}/.vim/colors"
+cp ~/dotfiles/neon-custom.vim "${HOME}/vim/colors/"
+echo ":colorscheme neon-custom" >> "${HOME}/.vimrc" # add my preferred colorscheme to end of .vimrc
 
 # Copy HTML tag folding vim script to .vim
 cp ~/dotfiles/html.vim ~/.vim
