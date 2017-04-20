@@ -132,9 +132,8 @@ installNVM (){
         # nvm locations have frequently changed
         # using clone and manual installation:
         if [ ! -d ~/.nvm/ ]; then
-            git clone git://github.com/creationix/nvm.git "$HOME/.nvm"
             # Load nvm and install latest production node
-            if [ "$?" -ne 0 ]; then 
+            if git clone git://github.com/creationix/nvm.git "$HOME/.nvm" ; then 
                echo "nvm installation command failed"; 
                exit 1; 
             fi
@@ -160,8 +159,7 @@ installBashCompletion (){
             echo "Installing git and bash-completion via brew since Apple's"
             echo "git has compatibility problems with git-flow-completion"
             $AppInstall install git 
-            $AppInstall install bash-completion
-            if [ "$?" -eq 0 ]; then
+            if ! $AppInstall install bash-completion; then
                 echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
                 echo '# setup bash completion not setup; must manually enable' >> "$HOME/.bashrc_custom"
@@ -187,8 +185,8 @@ installShellCheck (){
     $AppInstall install shellcheck
 }
 
-which node > /dev/null 2>&1 # for Cygwin compatibility
-if [ $? -eq 0 ]; then
+
+if which node > /dev/null 2>&1 ; then # for Cygwin compatibility 
     nodeInstalled="true"
 else
     nodeInstalled="false"
@@ -379,8 +377,7 @@ shootProfile
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    $(which xcode-select) -p
-    if [ "$?" -eq 0 ]; then
+    if $(which xcode-select) -p; then
         echo "xcode version: $(xcode-select --version) installed"
     else
         echo "xcode command line tools are not installed..." 
@@ -392,6 +389,7 @@ if [ "${OS}" == "mac" ]; then
         echo "Make sure your xcode tools are not a command line instance. Set them to the correct directory via: sudo xcode-select -s <correct-location>"
         echo "Typically, this happens when you are using the beta version of Xcode."
         echo  "...please follow instructions to install and re-run $0"
+        echo "after installation, you may need to execute: xcode-select -s /Applications/Xcode.app/Contents/Developer"
         exit 1
     fi
     if [ ! -f "$(which brew)" ]; then
@@ -519,8 +517,7 @@ printMenu(){
     fi
 
     set +o errexit
-    whereMongo=$(which mongod 2>&1) 
-    if [ $? -eq 0 ]; then
+    if whereMongo=$(which mongod 2>&1) ; then
         if [ -f "$whereMongo" ] && [ "${installMongo}" == "false" ]; then
             cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
         elif [ "${installMongo}" = "true" ]; then
@@ -581,8 +578,7 @@ runOption(){
 set -o errexit
 
 # Only have susccesfully used following as means to test for interactivity
-tty -s
-if [[ "$?" -eq 0 ]] ; then
+if tty -s ; then
     echo "Interactive mode..."
     printMenu
 else
