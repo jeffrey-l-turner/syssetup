@@ -60,7 +60,7 @@ if  [ "$#" -ne 0 ]; then
 fi
 
 # Version of Node to use:
-nvmuse="v6.10.1"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v8.2.1"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -212,7 +212,6 @@ nodeGlobalInstall() {
       echo -e " "
       if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
           installNVM
-          brew install node
       else
           installNVM
           n=$(which node);n=${n%/bin/node}; chmod -R 755 "$n/bin/*"; sudo cp -r "$n/{bin,lib,share}" /usr/local
@@ -750,21 +749,28 @@ elif [ "${editorInstall}" == "vim" ] ; then
         cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
         # shellcheck disable=SC1090
         source "${HOME}/dotfiles/.git_template/config.sh"
-        git init
-        git submodule add "${commandt}" bundle/command-t 
+        # git init
+        # git submodule add "${commandt}" bundle/command-t 
         yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
-        git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
-        yellow "Installing ctrl-p..."
+        # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
+        # yellow "Installing ctrl-p..."
 
     # Warn user that non-interactive vim will show and to wait for process to complete
-        echo " "
-        echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
-        echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
-        echo " "
-        sleep 7
-    # Install bundles and plugins for vim
-        vim +PluginInstall +qall
-        vim +BundleInstall +qall
+        # echo " "
+        # echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
+        # echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
+        # echo " "
+        # sleep 7
+    # Install bundles and vim-plug for neovim
+        curl -fLo /Users/jeff/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        if [ "${OS}" == "mac" ]; then # install VimR
+            echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
+            echo "Then remember to run :PlugInstall"
+        else # install Neovim
+            curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+            chmod u+x nvim.appimage
+            ./nvim.appimage
+        fi
     else
         echo -e "not installing VIM bundles on Cygwin..."
         # add Cygwin specifics to customized bashrc 
