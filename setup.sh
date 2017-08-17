@@ -316,8 +316,12 @@ fi
 if [ ! -d "$HOME/.ssh/" ]; then
     mkdir "$HOME/.ssh"
 fi 
-touch "$HOME/.ssh/config" 
-chmod 600 "$HOME/.ssh/config"
+if [ "${OS}" == "mac" ]; then
+    cp "$HOME/.ssh/config" "$HOME/.ssh/" 
+else
+    touch "$HOME/.ssh/config" 
+    chmod 600 "$HOME/.ssh/config"
+fi
 
 # These are functions to setup ssh keys for Heroku and GitHub:
 # The keys must still be registered with the respective accounts by the user
@@ -833,4 +837,3 @@ echo "Be sure to logout and log back in to properly setup your environment"
 echo "Copy appropriate config file (AngularJS, React, Flow, etc) from within ~/.git_template/ to ~/.git_template/config"
 echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
 echo "Then execute: git config --global init.templatedir '~/.git_template'"
-
