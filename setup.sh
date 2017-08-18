@@ -77,9 +77,6 @@ vundle="https://github.com/gmarik/vundle.git"
 commandt="git://git.wincent.com/command-t.git" 
 #libsyn="git://github.com/othree/javascript-libraries-syntax.vim.git"
  
-# location of git completion for bash
-#gitcomplete="https://github.com/bobthecow/git-flow-completion.git" 
- 
 lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
@@ -161,7 +158,7 @@ installBashCompletion (){
             # set note on bash completion in ~/.bashrc_custom
             echo "Installing git and bash-completion via brew since Apple's"
             echo "git has compatibility problems with git-flow-completion"
-            $AppInstall install git 
+            $AppInstall install git-flow-completion 
             if ! $AppInstall install bash-completion; then
                 echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
@@ -401,7 +398,8 @@ if [ "${OS}" == "mac" ]; then
     if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
-    brew install ctags 
+    brew install ctags python3 bash-completion # ctags may no be longer needed now with flow
+    pip3 install vim-vint # for vim linting
 fi
 
 # Put dotfiles in place if not already there
