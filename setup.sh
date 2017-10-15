@@ -831,6 +831,12 @@ cp ~/dotfiles/html.vim ~/.vim
 # Copy git template files for ctags to home dir
 cp -R ~/dotfiles/.git_template/ "${HOME}/.git_template"
 
+# some niceties for MacOS, and replae crappy Xcode git
+if [ "${OS}" == "mac" ]; then
+  brew install wget git python python3
+  npm i -g npm-completion
+fi
+
 echo "This script automatically installed ${gitdotfiles} to ~/dotfiles. These files can be used with Docker shell" 
 echo " "
 echo "Be sure to logout and log back in to properly setup your environment"
