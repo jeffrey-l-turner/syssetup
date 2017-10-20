@@ -398,8 +398,11 @@ if [ "${OS}" == "mac" ]; then
     if [ ! -f "$(which brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
-    brew install ctags python3 bash-completion # ctags may no be longer needed now with flow
+    brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
+    pip2 install neovim --upgrade
+    pip3 install neovim --uprgrade
     pip3 install vim-vint # for vim linting
+    brew install neovim/neovim/neovim
 fi
 
 # Put dotfiles in place if not already there
