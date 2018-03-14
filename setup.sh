@@ -60,7 +60,7 @@ if  [ "$#" -ne 0 ]; then
 fi
 
 # Version of Node to use:
-nvmuse="v8.7.0"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v8.10"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -399,10 +399,9 @@ if [ "${OS}" == "mac" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
     brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
-    pip2 install neovim --upgrade
-    pip3 install neovim --uprgrade
+    pip2 install neovim --uprgrade
     pip3 install vim-vint # for vim linting
-    brew install neovim/neovim/neovim
+    brew install neovim
 fi
 
 # Put dotfiles in place if not already there
@@ -623,7 +622,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
     echo "use sudo password for following if prompted"
     sudo "$npm" install -g eslint js-beautify jsonlint repl.history
   else
-    "$npm" install -g eslint js-beautify jsonlint repl.history
+    "$npm" install -g eslint js-beautify jsonlint repl.history npm-completion
   fi
 
   # Install rlwrap to provide libreadline features with node
@@ -767,7 +766,7 @@ elif [ "${editorInstall}" == "vim" ] ; then
         # echo " "
         # sleep 7
     # Install bundles and vim-plug for neovim
-        curl -fLo /Users/jeff/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        curl -fLo ${HOME}/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         if [ "${OS}" == "mac" ]; then # install VimR
             echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
             echo "Then remember to run :PlugInstall"
