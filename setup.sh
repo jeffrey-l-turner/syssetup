@@ -833,7 +833,7 @@ cp -R ~/dotfiles/.git_template/ "${HOME}/.git_template"
 
 # some niceties for MacOS, and replae crappy Xcode git
 if [ "${OS}" == "mac" ]; then
-  brew install wget git python python3
+  brew install wget git python python3 gawk
   npm i -g npm-completion
 fi
 
