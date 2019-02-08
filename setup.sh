@@ -60,7 +60,7 @@ if  [ "$#" -ne 0 ]; then
 fi
 
 # Version of Node to use:
-nvmuse="v8.10"  # note: v + version number is required for pathing on nvm usage
+nvmuse="v10.15.1"  # note: v + version number is required for pathing on nvm usage
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -81,7 +81,7 @@ lowercase(){
     echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
-if [ -f "$(which git)" ]; then
+if [ -f "$(command -v git)" ]; then
     gitInstalled="true"
 else
     gitInstalled="false"
@@ -186,7 +186,7 @@ installShellCheck (){
 }
 
 
-if which node > /dev/null 2>&1 ; then # for Cygwin compatibility 
+if command -v node > /dev/null 2>&1 ; then # for Cygwin compatibility 
     nodeInstalled="true"
 else
     nodeInstalled="false"
@@ -211,7 +211,7 @@ nodeGlobalInstall() {
           installNVM
       else
           installNVM
-          n=$(which node);n=${n%/bin/node}; chmod -R 755 "$n/bin/*"; sudo cp -r "$n/{bin,lib,share}" /usr/local
+          n=$(command -v node);n=${n%/bin/node}; chmod -R 755 "$n/bin/*"; sudo cp -r "$n/{bin,lib,share}" /usr/local
       fi
     fi
 }
@@ -380,7 +380,7 @@ shootProfile
 
 # If using Mac OS, then check if xcode is installed, then install brew & ctags
 if [ "${OS}" == "mac" ]; then
-    if $(which xcode-select) -p ; then
+    if $(command -v xcode-select) -p ; then
         echo "xcode version: $(xcode-select --version) installed"
     else
         echo "xcode command line tools are not installed..." 
@@ -388,14 +388,14 @@ if [ "${OS}" == "mac" ]; then
         echo " (see:http://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12)"
         echo ""
         echo "Attempting to install xcode tools... please follow instructions to install and re-run $0"
-        $(which xcode-select) --install
+        $(command -v xcode-select) --install
         echo "Make sure your xcode tools are not a command line instance. Set them to the correct directory via: sudo xcode-select -s <correct-location>"
         echo "Typically, this happens when you are using the beta version of Xcode."
         echo  "...please follow instructions to install and re-run $0"
         echo "after installation, you may need to execute: xcode-select -s /Applications/Xcode.app/Contents/Developer"
         exit 1
     fi
-    if [ ! -f "$(which brew)" ]; then
+    if [ ! -f "$(command -v brew)" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
     brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
@@ -459,7 +459,7 @@ printMenu(){
     cyan "KERNEL: $KERNEL"
     cyan "MACH: $MACH"
     if [ "${nodeInstalled}" = "true" ] ; then 
-        echo "node installed at: " "$(which node)"
+        echo "node installed at: " "$(command -v node)"
         if [ -e /usr/local/bin/node ] ; then
             cyan "and node already globally installed at: /usr/local/bin/node"
             cyan "Will use node version: $nvmuse" 
@@ -523,7 +523,7 @@ printMenu(){
     fi
 
     set +o errexit
-    if whereMongo=$(which mongod 2>&1) ; then
+    if whereMongo=$(command -v mongod 2>&1) ; then
         if [ -f "$whereMongo" ] && [ "${installMongo}" == "false" ]; then
             cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
         elif [ "${installMongo}" = "true" ]; then
@@ -567,12 +567,11 @@ runOption(){
         3) toggleVimEmacs;;
         4) nodeGlobalInstall;;
         5) InstallMongo;;
-        6) exit;;
         q) exit;;
         Q) exit;;
         y) setFlags;;
         c) setFlags;;
-        6) setFlags
+        6) exit;;
     esac 
     echo "Press return to continue"
     # shellcheck disable=SC2034
@@ -628,7 +627,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   # Install rlwrap to provide libreadline features with node
   # See: http://nodejs.org/api/repl.html#repl_repl
   if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-      if [ ! -f "$(which rlwrap)" ] ; then 
+      if [ ! -f "$(command -v rlwrap)" ] ; then 
           $AppInstall install readline-devel 
           curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
           pushd /tmp/ 
@@ -650,7 +649,7 @@ else # install node globally via binary
       nodeGlobalInstall
     fi
     # install apt-cygwin for individual cygwin commands
-    which "$AppInstall" > /dev/null 2>&1
+    command -v "$AppInstall" > /dev/null 2>&1
     if [ $? -eq 1 ] ; then
       echo -e "installing apt-cyg from GitHub"
       curl https://raw.githubusercontent.com/transcode-open/apt-cyg/master/apt-cyg > /usr/bin
@@ -766,7 +765,7 @@ elif [ "${editorInstall}" == "vim" ] ; then
         # echo " "
         # sleep 7
     # Install bundles and vim-plug for neovim
-        curl -fLo ${HOME}/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         if [ "${OS}" == "mac" ]; then # install VimR
             echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
             echo "Then remember to run :PlugInstall"
