@@ -59,8 +59,30 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
+installNVM(){
+    set +o errexit # nvm shell scripts have a habit of return non-zero error codes upon success
+    # Install nvm: node-version manager
+    # https://github.com/creationix/nvm
+    # nvm locations have frequently changed
+    # using clone and manual installation:
+    if [ ! -d ~/.nvm/ ]; then
+        # Load nvm and install latest production node
+        if ! git clone git://github.com/creationix/nvm.git "$HOME/.nvm" ; then 
+           echo "nvm installation command failed"; 
+           exit 1; 
+        fi
+    fi 
+    if [ "${OS}" = "mac" ]; then
+        $AppInstall install openssl
+    fi
+    # shellcheck disable=SC1090
+    . "$HOME/.nvm/nvm.sh"
+    set -o errexit 
+}
+
 # Version of Node to use:
-nvmuse="v10.15.3"  # note: v + version number is required for pathing on nvm usage
+installNVM 
+nvmuse=$(nvm ls-remote --no-colors | grep -i latest | grep -i lts | tail -1 | awk '{print $1}')
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
@@ -149,33 +171,6 @@ cloneDotFiles(){
     dotFilesCloned="true"
 }
 
-nvmInstalled="false"
-installNVM (){
-    set +o errexit # nvm shell scripts have a habit of return non-zero error codes upon success
-    if [ "$nvmInstalled" = "false" ]; then
-        # Install nvm: node-version manager
-        # https://github.com/creationix/nvm
-        # nvm locations have frequently changed
-        # using clone and manual installation:
-        if [ ! -d ~/.nvm/ ]; then
-            # Load nvm and install latest production node
-            if ! git clone git://github.com/creationix/nvm.git "$HOME/.nvm" ; then 
-               echo "nvm installation command failed"; 
-               exit 1; 
-            fi
-        fi 
-        if [ "${OS}" = "mac" ]; then
-            $AppInstall install openssl
-        fi
-        # shellcheck disable=SC1090
-        . "$HOME/.nvm/nvm.sh"
-        nvm install $nvmuse
-        nvm use $nvmuse
-        nvm alias default $nvmuse
-    fi 
-    nvmInstalled="true"
-    set -o errexit 
-}
 
 bashCompletion="false"
 installBashCompletion (){
@@ -233,10 +228,7 @@ nodeGlobalInstall() {
       echo -e  "copying node files for version $nvmuse... enter sudo password if prompted"
       echo -e  "enter sudo password if prompted"
       echo -e " "
-      if [ "${OS}" == "mac" ]; then # globally install node for Mac users via Homebrew
-          installNVM
-      else
-          installNVM
+      if [ "${OS}" != "mac" ]; then # globally install node for Mac users via Homebrew
           n=$(command -v node);n=${n%/bin/node}; chmod -R 755 "$n/bin/*"; sudo cp -r "$n/{bin,lib,share}" /usr/local
       fi
     fi
@@ -485,8 +477,8 @@ printMenu(){
         green "GitHub key has been created and placed in ~/.ssh/github.rsa"
     fi
     if [ "${OS}" == "mac" ]; then
-        iyellow " Mac OS users should note that this installation script relies on the use of Homebrew and may conflict "
-        iyellow "                                         with use of Macports or Fink!                                 \n"
+        yellow " Mac OS users should note that this installation script relies on the use of Homebrew and may conflict "
+        yellow "                                         with use of Macports or Fink!                                 \n"
     fi
     echo " "
     echo "=============================================================================================================="
@@ -584,7 +576,10 @@ fi
 
 if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix 
   installGit  
-  installNVM 
+  nvm install $nvmuse
+  nvm use $nvmuse
+  nvm alias default $nvmuse
+  set -o errexit 
 
   # moving set -u since nvm installation has undefined variables
   set -u # exit if undefined variables
@@ -593,12 +588,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   npm="$HOME/.nvm/versions/node/$nvmuse/bin/npm"
 
 
-  if [ "$nvmInstalled" = "false" ]; then
-    echo "use sudo password for following if prompted"
-    sudo "$npm" install -g eslint js-beautify jsonlint repl.history
-  else
-    "$npm" install -g eslint js-beautify jsonlint repl.history npm-completion
-  fi
+  "${npm}" install -g eslint js-beautify jsonlint repl.history npm-completion
 
   installrlwrap
 
@@ -709,8 +699,8 @@ installEditor(){
         # Install bundles and vim-plug for neovim
             curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
             if [ "${OS}" == "mac" ]; then # install VimR
-                echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
-                echo "Then remember to run :PlugInstall"
+                cyan "Install latest VimR from https://github.com/qvacua/vimr/releases"
+                cyan "Then remember to run :PlugInstall"
             else # install Neovim
                 curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
                 chmod u+x nvim.appimage
