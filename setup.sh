@@ -320,27 +320,13 @@ else
     chmod 600 "$HOME/.ssh/config"
 fi
 
-# These are functions to setup ssh keys for Heroku and GitHub:
-# The keys must still be registered with the respective accounts by the user
-herokuKey="false"
-genHeroku(){
-    echo -e '\t Generating Heroku Key (~/.ssh/heroku-rsa)'
-    echo "Enter email address for Heroku key:"
-    read -r email;
-    ssh-keygen -t rsa -C "$email" -f "$HOME/.ssh/heroku-rsa"
-    herokuKey="true"
-    cloneDotFiles;
-    cat "$HOME/dotfiles/ssh-config-heroku" >> "$HOME/.ssh/config"
-    echo "Note: you must still upload your key to your Heroku account!"
-}
-
 githubKey="false"
 genGitHub(){
+    githubKey="true"
     echo -e '\t Generating GitHub Key (~/.ssh/github-rsa)'
     echo "Enter email address for GitHub key:"
     read -r email;
-    ssh-keygen -t rsa -C "$email"  -f "$HOME/.ssh/github-rsa"
-    githubKey="true"
+    ssh-keygen -o -a 100 -t ed25519 -f "$HOME/.ssh/github_ed25519" -C "$0 generated key"
     cloneDotFiles;
     cat "$HOME/dotfiles/ssh-config-github" >> "$HOME/.ssh/config"
     echo "Note: you must still upload your key to your GitHub profile!"
@@ -448,7 +434,7 @@ fi
 ####################################################################
 printMenu(){
     clear
-    echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, Heroku toolbelt, bash eternal history, and standard config files as   "
+    echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, bash eternal history, and standard config files as   "
     echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     magenta "OS: $OS"
@@ -479,9 +465,6 @@ printMenu(){
     fi
     green "Application Installer: $AppInstall"  
     green "Editor and configuration to be installed: "$editorInstall  
-    if [ "${herokuKey}" = "true" ] ; then
-         green "Heroku key has been created and Heroku toolbelt will be installed. "
-    fi
     if [ "${githubKey}" == "true" ] ; then
         green "GitHub key has been created and placed in ~/.ssh/github.rsa"
     fi
@@ -491,17 +474,9 @@ printMenu(){
     fi
     echo " "
     echo "=============================================================================================================="
-    echo "= You may also generate SSH keys for use with Heroku or GitHub prior to setup by selecting the options below ="
+    echo "= You may also generate SSH keys for use with GitHub prior to setup by selecting the options below ="
     echo "=============================================================================================================="
     echo " "
-    if [ -e "$HOME/.ssh/heroku-rsa" ] ; then
-        yellow "\t1) Heroku Key installed at ~/.ssh/heroku-rsa. Press 1 to overwrite existing key and install toolbelt."
-        if [ "${herokuKey}" = "true" ] ; then
-            white "Heroku Toolbelt will be (re-)installed."
-        fi
-    else
-        white "\t1) Generate Heroku Key (~/.ssh/heroku-rsa) and install Heroku Toolbelt"
-    fi
     if [ -e "$HOME/.ssh/github-rsa" ] ; then
         yellow "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
     else
@@ -562,16 +537,15 @@ printMenu(){
 ####################################################################
 runOption(){
     case $option in
-        1) genHeroku;;
-        2) genGitHub;;
-        3) toggleVimEmacs;;
-        4) nodeGlobalInstall;;
-        5) InstallMongo;;
+        1) genGitHub;;
+        2) toggleVimEmacs;;
+        3) nodeGlobalInstall;;
+        4) InstallMongo;;
         q) exit;;
         Q) exit;;
         y) setFlags;;
         c) setFlags;;
-        6) exit;;
+        5) exit;;
     esac 
     echo "Press return to continue"
     # shellcheck disable=SC2034
@@ -802,17 +776,6 @@ if [ "${OS}" == "mac" ]; then
 fi
 # add better git log
 git config --global alias.lg1 "log --graph --abbrev-commit --decorate --first-parent --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
-
-#Install Heroku tool belt if Heroku keys were installed in ~/.ssh
-#Install wget and use different install if Mac OS:
-if [ "$herokuKey" == "true" ]; then
-    if [ "${OS}" == "mac" ]; then
-        $AppInstall install wget
-        wget -qO- https://toolbelt.heroku.com/install.sh | sh
-    else
-        wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-    fi
-fi
 
 # Install Bash and Git Flow Completion:
 installBashCompletion 
