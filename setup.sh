@@ -91,6 +91,29 @@ else
     echo "Git not installed..."
 fi
 
+installrlwrap() {
+  # Install rlwrap to provide libreadline features with node
+  # See: http://nodejs.org/api/repl.html#repl_repl
+  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
+      if [ ! -f "$(command -v rlwrap)" ] ; then 
+          $AppInstall install readline-devel 
+          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
+          pushd /tmp/ 
+          tar -zxvf /tmp/readline-master.tar.gz  
+          cd readline-master || error "unable to cd to readline-master"
+          ./configure 
+          make 
+          sudo make install 
+          popd
+        else
+          echo 'rlwrap already installed!'
+        fi
+  elif [ "${OS}" == "mac" ]; then
+      $AppInstall install rlwrap
+  else
+      $AppInstall install -y rlwrap
+  fi 
+}
 installGit() {
     if [ "$gitInstalled" == "false" ]; then
        if [ "${OS}" == "mac" ]; then
@@ -425,6 +448,7 @@ fi
 # Print Menu
 ####################################################################
 printMenu(){
+    set +o errexit
     clear
     echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, bash eternal history, and standard config files as   "
     echo -e "         well as a standard emacs or neovim/vim developer environment depending upon specified configuration below.         "
@@ -489,21 +513,20 @@ printMenu(){
         fi
     fi
 
-    set +o errexit
     set -o errexit
-    red "\t6) Exit Now!"
-    green "\t7) Continue Setup"
+    red "\t4) Exit Now!"
+    green "\t5) Continue Setup"
     echo -e " "
-    red "Press ^C, q or 6 if the above system information is not correct or you wish to abort installation"
+    red "Press ^C, q or 4 if the above system information is not correct or you wish to abort installation"
     white  "------------------------------------------------------------------------------------------------- "
-    green "Press press 7, c, or y to proceed"
+    green "Press press 5, c, or y to proceed"
     read -r option;
     # shellcheck disable=SC2143
-    while [[ $option -gt 12 || ! "$(echo "$option" | grep '^[1-7qQyc]$')" ]]
+    while [[ $option -gt 12 || ! "$(echo "$option" | grep '^[1-5qQyc]$')" ]]
     do
         printMenu
     done
-    if [[ "$option" == "7" || "$option" == "c" || "$option" == "y" ]]; then
+    if [[ "$option" == "5" || "$option" == "c" || "$option" == "y" ]]; then
         echo "Starting installation..."
         echo 
         setFlags
@@ -526,6 +549,7 @@ runOption(){
         y) setFlags;;
         c) setFlags;;
         4) exit;;
+        5) setFlags;;
     esac 
     echo "Press return to continue"
     # shellcheck disable=SC2034
@@ -558,19 +582,17 @@ fi
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
 
-
-
 if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix 
   installGit  
   installNVM 
 
   # moving set -u since nvm installation has undefined variables
   set -u # exit if undefined variables
-  
+
   # Set npm to local version and then use sudo for global installation
   npm="$HOME/.nvm/versions/node/$nvmuse/bin/npm"
 
-    
+
   if [ "$nvmInstalled" = "false" ]; then
     echo "use sudo password for following if prompted"
     sudo "$npm" install -g eslint js-beautify jsonlint repl.history
@@ -578,25 +600,8 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
     "$npm" install -g eslint js-beautify jsonlint repl.history npm-completion
   fi
 
-  # Install rlwrap to provide libreadline features with node
-  # See: http://nodejs.org/api/repl.html#repl_repl
-  if [ "${DIST}" == "CentOS" ] ; then # CentOS requires compilation from source with dependencies
-      if [ ! -f "$(command -v rlwrap)" ] ; then 
-          $AppInstall install readline-devel 
-          curl http://git.savannah.gnu.org/cgit/readline.git/snapshot/readline-master.tar.gz > /tmp/readline-master.tar.gz 
-          pushd /tmp/ 
-          tar -zxvf /tmp/readline-master.tar.gz  
-          cd readline-master || error "unable to cd to readline-master"
-          ./configure 
-          make 
-          sudo make install 
-          popd
-        else
-          echo 'rlwrap already installed!'
-        fi
-  else
-      $AppInstall install -y rlwrap
-  fi 
+  installrlwrap
+
 else # install node globally via binary
     npm="npm"
     if [ $nodeInstalled == "false" ] ; then
@@ -617,14 +622,14 @@ fi
 # Select whether to install neovim/vim or emacs configuration/files:
 if [ "${editorInstall}" == "emacs" ] ; then
 
-# Install emacs24 on other OSes than Mac OS
+    # Install emacs24 on other OSes than Mac OS
     if [ "${OS}" == "mac" ]; then
         $AppInstall install --cocoa emacs 
     elif [ "${DistroBasedOn}" == "redhat" ]; then
         echo "Must manually install emacs24 on RHEL"
         echo "      Emacs not installed!!"
     else
-# https://launchpad.net/~cassou/+archive/emacs
+        # https://launchpad.net/~cassou/+archive/emacs
         $AppInstall add-apt-repository -y ppa:cassou/emacs
         $AppInstall update
         $AppInstall install -y emacs24 emacs24-el emacs24-common-non-dfsg
@@ -642,82 +647,89 @@ fi
 
 cd "$HOME" || error unable to cd
 
-if [ "${OS}" == "mac" ]; then
-    set +o errexit
-    ln "${lnopts}" dotfiles/.screenrc "$HOME"
-    ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-    ln "${lnopts}" dotfiles/.bashrc "$HOME"
-    ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-    ln "${lnopts}" dotfiles/.bash_logout "$HOME"
-    set -o errexit
-else
-    ln "${lnopts}" dotfiles/.screenrc "$HOME"
-    ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-    ln "${lnopts}" dotfiles/.bashrc "$HOME"
-    ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-    ln "${lnopts}" dotfiles/.bash_logout "$HOME"
-fi
-
-
-# append to custom rc file rather than linking -- this is changed from Balaji's script
-cat dotfiles/.bashrc_custom >> "$HOME/.bashrc_custom"
-
-# Select whether to link vim or emacs dotfiles:
-if [ "${editorInstall}" == "emacs" ] ; then
-        ln -sf dotfiles/.emacs.d .  
-elif [ "${editorInstall}" == "vim" ] ; then
-    set +o errexit
-    if [ "${OS}" != "cygwin" ] ; then 
-        rm -f "${HOME}/.vimrc"
-        cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
-
-        # install pathogen
-        mkdir -p "${HOME}/.vim/autoload"
-        mkdir -p "${HOME}/.vim/bundle"
-        curl -LSso "${HOME}/.vim/autoload/pathogen.vim" https://tpo.pe/pathogen.vim
-
-
-        # setup vim on CentOS
-        if [ "${DIST}" == "CentOS" ] ; then
-            $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
-            echo "alias vi=vim " >> ~/.bashrc_custom
-        fi 
-
-    # setup pathogen specific installs by using git clones
-    # note: these should installed on ~/vimfiles on Windows...
-        cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
-        # shellcheck disable=SC1090
-        source "${HOME}/dotfiles/.git_template/config.sh"
-        # git init
-        # git submodule add "${commandt}" bundle/command-t 
-        yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
-        # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
-        # yellow "Installing ctrl-p..."
-
-    # Warn user that non-interactive vim will show and to wait for process to complete
-        # echo " "
-        # echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
-        # echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
-        # echo " "
-        # sleep 7
-    # Install bundles and vim-plug for neovim
-        curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        if [ "${OS}" == "mac" ]; then # install VimR
-            echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
-            echo "Then remember to run :PlugInstall"
-        else # install Neovim
-            curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
-            chmod u+x nvim.appimage
-            ./nvim.appimage
-        fi
+linkDotfiles(){
+    echo "linking dotfiles..."
+    if [ "${OS}" == "mac" ]; then
+        set +o errexit
+        ln "${lnopts}" dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+        set -o errexit
     else
-        echo -e "not installing VIM bundles on Cygwin..."
-        # add Cygwin specifics to customized bashrc 
-        echo "export TERM=cygwin" >> ~/.bashrc_custom
-        echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
+        ln "${lnopts}" dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
     fi
-    set -o errexit
-fi
+   }
+     
+
+installEditor(){
+    # Select whether to link vim or emacs dotfiles:
+    if [ "${editorInstall}" == "emacs" ] ; then
+            ln -sf dotfiles/.emacs.d .  
+    elif [ "${editorInstall}" == "vim" ] ; then
+        set +o errexit
+        if [ "${OS}" != "cygwin" ] ; then 
+            rm -f "${HOME}/.vimrc"
+            cp -f "${HOME}/dotfiles/.vimrc" "${HOME}"
+
+            # install pathogen
+            mkdir -p "${HOME}/.vim/autoload"
+            mkdir -p "${HOME}/.vim/bundle"
+            curl -LSso "${HOME}/.vim/autoload/pathogen.vim" https://tpo.pe/pathogen.vim
+
+
+            # setup vim on CentOS
+            if [ "${DIST}" == "CentOS" ] ; then
+                $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
+                echo "alias vi=vim " >> ~/.bashrc_custom
+            fi 
+
+        # setup pathogen specific installs by using git clones
+        # note: these should installed on ~/vimfiles on Windows...
+            cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
+            # shellcheck disable=SC1090
+            source "${HOME}/dotfiles/.git_template/config.sh"
+            # git init
+            # git submodule add "${commandt}" bundle/command-t 
+            yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
+            # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
+            # yellow "Installing ctrl-p..."
+
+        # Warn user that non-interactive vim will show and to wait for process to complete
+            # echo " "
+            # echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
+            # echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
+            # echo " "
+            # sleep 7
+        # Install bundles and vim-plug for neovim
+            curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+            if [ "${OS}" == "mac" ]; then # install VimR
+                echo "Install latest VimR from https://github.com/qvacua/vimr/releases"
+                echo "Then remember to run :PlugInstall"
+            else # install Neovim
+                curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+                chmod u+x nvim.appimage
+                ./nvim.appimage
+            fi
+        else
+            echo -e "not installing VIM bundles on Cygwin..."
+            # add Cygwin specifics to customized bashrc 
+            echo "export TERM=cygwin" >> ~/.bashrc_custom
+            echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
+        fi
+        set -o errexit
+    fi
+}
+
+linkDotfiles
+installEditor
+# append to custom rc file rather than linking -- this is changed from Balaji's script
+cat "${HOME}/dotfiles/.bashrc_custom" >> "${HOME}/.bashrc_custom"
 
 #If using Mac, copy terminal settings files over to home as well
 if [ "${OS}" == "mac" ]; then
