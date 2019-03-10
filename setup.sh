@@ -427,7 +427,7 @@ fi
 printMenu(){
     clear
     echo -e '\n\033[46;69m'"\033[1m    Headless server setup for node.js, rlwrap, bash eternal history, and standard config files as   "
-    echo -e "         well as a standard emacs or vim developer environment depending upon specified configuration below.         "
+    echo -e "         well as a standard emacs or neovim/vim developer environment depending upon specified configuration below.         "
     echo -e "See: $gitdotfiles for the repository with the configuration files to be installed\033[0m\n"
     magenta "OS: $OS"
     magenta "DIST: $DIST"
@@ -614,7 +614,7 @@ else # install node globally via binary
     $npm install -g eslint js-beautify jsonlint
 fi
 
-# Select whether to install vim or emacs configuration/files:
+# Select whether to install neovim/vim or emacs configuration/files:
 if [ "${editorInstall}" == "emacs" ] ; then
 
 # Install emacs24 on other OSes than Mac OS
