@@ -64,6 +64,9 @@ nvmuse="v10.15.1"  # note: v + version number is required for pathing on nvm usa
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
+# Git(Hub) key to generate
+gitsshKey=github_ed25519
+
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
 # originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
@@ -323,10 +326,10 @@ fi
 githubKey="false"
 genGitHub(){
     githubKey="true"
-    echo -e '\t Generating GitHub Key (~/.ssh/github-rsa)'
+    echo -e '\t Generating GitHub Key (~/.ssh/$gitsshKey)'
     echo "Enter email address for GitHub key:"
     read -r email;
-    ssh-keygen -o -a 100 -t ed25519 -f "$HOME/.ssh/github_ed25519" -C "$0 generated key"
+    ssh-keygen -o -a 100 -t ed25519 -f "$HOME/.ssh/${gitsshKey}" -C "$0 generated key"
     cloneDotFiles;
     cat "$HOME/dotfiles/ssh-config-github" >> "$HOME/.ssh/config"
     echo "Note: you must still upload your key to your GitHub profile!"
@@ -348,17 +351,6 @@ toggleVimEmacs(){
             editorInstall="vim"
         fi  
 
-}
-
-# Toggle installation of MongoDB
-installMongo="false";
-
-InstallMongo(){
-    if [ "${installMongo}" == "false" ]; then
-         installMongo="true"
-     else
-         installMongo="false"
-    fi
 }
 
 # Load menu in interactive mode
@@ -385,7 +377,7 @@ if [ "${OS}" == "mac" ]; then
         ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     fi
     brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
-    pip2 install neovim --uprgrade
+    pip3 install neovim --upgrade
     pip3 install vim-vint # for vim linting
     brew install neovim
 fi
@@ -477,18 +469,18 @@ printMenu(){
     echo "= You may also generate SSH keys for use with GitHub prior to setup by selecting the options below ="
     echo "=============================================================================================================="
     echo " "
-    if [ -e "$HOME/.ssh/github-rsa" ] ; then
-        yellow "\t2) GitHub Key found at ~/.ssh/github-rsa.pub -- Be sure to add public key to your profile in GitHub"
+    if [ -e "$HOME/.ssh/${gitsshKey}" ] ; then
+        yellow "\t1) GitHub Key found at ~/.ssh/${gitsshKey}.pub -- Be sure to add public key to your profile in GitHub"
     else
-        white "\t2) Generate GitHub Key (~/.ssh/github-rsa)"
+        white "\t1) Generate GitHub Key (~/.ssh/${gitsshKey})"
     fi
     if [ "${editorInstall}" = "vim" ] ; then
-        white "\t3) Toggle to install emacs instead of vim "
+        white "\t2) Toggle to install emacs instead of vim "
     else
-        white "\t3) Toggle to install vim instead of emacs "
+        white "\t2) Toggle to install vim instead of emacs "
     fi
     if [ -e /usr/local/bin/node ] ; then
-        cyan "\t4) node already globally installed (press 4 to re-install version $nvmuse)"
+        cyan "\t3) node already globally installed (press 4 to re-install version $nvmuse)"
     else
         if [ "${OS}" == 'cygwin' ] ; then
             cyan "\t4) Install node from ${winNode} for global use" 
@@ -498,17 +490,6 @@ printMenu(){
     fi
 
     set +o errexit
-    if whereMongo=$(command -v mongod 2>&1) ; then
-        if [ -f "$whereMongo" ] && [ "${installMongo}" == "false" ]; then
-            cyan "\t5) MongoDB already installed. Select to toggle to fresh installation" 
-        elif [ "${installMongo}" = "true" ]; then
-            yellow "\t5) MongoDB will be (re-)installed; Select to toggle" 
-        else
-            white "\t5) MongoDB not currently installed; Select to install" 
-        fi
-    else
-        white "\t5) MongoDB not found; Select to install" 
-    fi
     set -o errexit
     red "\t6) Exit Now!"
     green "\t7) Continue Setup"
@@ -540,12 +521,11 @@ runOption(){
         1) genGitHub;;
         2) toggleVimEmacs;;
         3) nodeGlobalInstall;;
-        4) InstallMongo;;
         q) exit;;
         Q) exit;;
         y) setFlags;;
         c) setFlags;;
-        5) exit;;
+        4) exit;;
     esac 
     echo "Press return to continue"
     # shellcheck disable=SC2034
@@ -632,24 +612,6 @@ else # install node globally via binary
     $AppInstall install rlwrap
     $AppInstall install ncurses # for clear command
     $npm install -g eslint js-beautify jsonlint
-fi
-
-#Install MongoDB; see: http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
-if [ "${installMongo}" == "true" ]; then
-    if [ "${OS}" == "mac" ]; then
-      $AppInstall install mongodb 
-    elif [ "${DistroBasedOn}" == "redhat" ]; then 
-        echo "Must manually install MongoDB on RHEL/CentOS"
-        echo "       Mongo DB not installed!!"
-    elif [ "${OS}" == "cygwin" ] ; then
-    	echo not installing Mongo from command line
-    	echo -e 'Use Windows Mongo installation (http://www.mongodb.org/downloads)'
-    else
-        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-        echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/10gen.list
-        $AppInstall update
-        $AppInstall install mongodb-10gen
-    fi
 fi
 
 # Select whether to install vim or emacs configuration/files:
