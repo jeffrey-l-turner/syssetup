@@ -37,5 +37,6 @@ Then, execute:
 ```
 to finish setting up git for ctagging, etc. in the new shell.
 
-See also http://github.com/jeffrey-l-turner/dotfiles
+Remember to `ssh-add -K ~/.ssh/id_ed25519` on your Mac to add these to your keychain. after setup or simply use these [dotfiles](http://github.com/jeffrey-l-turner/dotfiles).
+for your `.bash*` setup:
 
