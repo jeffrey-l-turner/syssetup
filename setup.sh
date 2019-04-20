@@ -82,7 +82,7 @@ installNVM(){
 
 # Version of Node to use:
 installNVM 
-nvmuse=$(nvm ls-remote --no-colors | grep -i latest | grep -i lts | tail -1 | awk '{print $1}')
+nvmuse=$(nvm ls-remote --no-colors | grep -i latest | grep -i lts | tail -1 | awk '{print $2}')
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
 
