@@ -27,6 +27,7 @@
 
 echoerr() { echo "$@" 1>&2; }
 
+# Setup "{{{
 # shellcheck disable=SC2120
 usage() {
  	echoerr "$(basename "$0")": ERROR: "$*" 1>&2
@@ -70,7 +71,9 @@ if [ "${OS}" = "mac" ]; then
 else
   awk='awk'
 fi
+# "}}}
 
+# Functions & Core env vars"{{{
 installNVM(){
     set +o errexit # nvm shell scripts have a habit of return non-zero error codes upon success
     # Install nvm: node-version manager
@@ -94,17 +97,6 @@ installNVM(){
     fi
     set -o errexit
 }
-
-installNVM
-# Version of Node to use:
-# shellcheck disable=SC2016
-nvmuse=$(nvm ls-remote --no-colors | grep -i -- '->' | ${awk} '{print $2}')
-echo "will use ${nvmuse}"
-# binary of node to use on Windows/Cygwin
-winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
-
-# Git(Hub) key to generate
-gitsshKey=github_ed25519
 
 # location of dotfiles on Git
 # not using git ssh key to insure easy copy without adding key
@@ -223,13 +215,6 @@ installShellCheck (){
     $AppInstall install shellcheck
 }
 
-
-if command -v node > /dev/null 2>&1 ; then # for Cygwin compatibility
-    nodeInstalled="true"
-else
-    nodeInstalled="false"
-fi
-
 # Global installation for node:
 nodeGlobalInstall() {
     if [ "${OS}" == "cygwin" ]; then
@@ -251,7 +236,134 @@ nodeGlobalInstall() {
     fi
 }
 
+githubKey="false"
+genGitHub(){
+    githubKey="true"
+    echo -e "\t Generating GitHub Key (~/.ssh/$gitsshKey)"
+    echo "Enter email address for GitHub key:"
+    read -r email;
+    ssh-keygen -o -a 100 -t ed25519 -f "$HOME/.ssh/${gitsshKey}" -C "${email} generated key"
+    cloneDotFiles;
+    cat "$HOME/src/dotfiles/ssh-config-github" >> "$HOME/.ssh/config"
+    echo "Note: you must still upload your key to your GitHub profile!"
+}
 
+setFlags(){
+    readonly "githubKey"
+    readonly "editorInstall"
+}
+
+# These are functions to setup to toggle vim and emacs installation
+# vim will be installed along with vundle and the refactor colorscheme (via .vimrc) by default
+editorInstall=vim
+toggleVimEmacs(){
+        if [ "${editorInstall}" == "vim" ] ; then
+            editorInstall="emacs"
+        else
+            editorInstall="vim"
+        fi
+}
+
+linkDotfiles(){
+    echo "linking dotfiles..."
+    cd "${HOME}/src/"
+    if [ "${OS}" == "mac" ]; then
+        set +o errexit
+        ln "${lnopts}" dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+        set -o errexit
+    else
+        ln "${lnopts}" dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+    fi
+    cd -
+}
+
+installEditor(){
+    # Select whether to link vim or emacs dotfiles:
+    if [ "${editorInstall}" == "emacs" ] ; then
+            ln -sf "${HOME}/src/dotfiles/.emacs.d" .
+    elif [ "${editorInstall}" == "vim" ] ; then
+        set +o errexit
+        if [ "${OS}" != "cygwin" ] ; then
+            rm -f "${HOME}/.vimrc"
+            cp -f "${HOME}/src/dotfiles/.vimrc" "${HOME}"
+
+            # install pathogen
+            mkdir -p "${HOME}/.vim/autoload"
+            mkdir -p "${HOME}/.vim/bundle"
+            curl -LSso "${HOME}/.vim/autoload/pathogen.vim" https://tpo.pe/pathogen.vim
+
+
+            # setup vim on CentOS
+            if [ "${DIST}" == "CentOS" ] ; then
+                $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
+                echo "alias vi=vim " >> ~/.bashrc_custom
+            fi
+
+        # setup pathogen specific installs by using git clones
+        # note: these should installed on ~/vimfiles on Windows...
+            cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
+            # shellcheck disable=SC1090
+            source "${HOME}/src/dotfiles/.git_template/config.sh"
+            # git init
+            # git submodule add "${commandt}" bundle/command-t
+            yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
+            # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
+            # yellow "Installing ctrl-p..."
+
+        # Warn user that non-interactive vim will show and to wait for process to complete
+            # echo " "
+            # echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
+            # echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
+            # echo " "
+            # sleep 7
+        # Install bundles and vim-plug for neovim
+            curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+            if [ "${OS}" == "mac" ]; then # install VimR
+                cyan "Install latest VimR from https://github.com/qvacua/vimr/releases"
+                cyan "Then remember to run :PlugInstall"
+            else # install Neovim
+                curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+                chmod u+x nvim.appimage
+                ./nvim.appimage
+            fi
+        else
+            echo -e "not installing VIM bundles on Cygwin..."
+            # add Cygwin specifics to customized bashrc
+            echo "export TERM=cygwin" >> ~/.bashrc_custom
+            echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
+        fi
+        set -o errexit
+    fi
+}
+# "}}}
+
+# NVM setup "{{{
+installNVM
+# Version of Node to use:
+# shellcheck disable=SC2016
+nvmuse=$(nvm ls-remote --no-colors | grep -i -- '->' | ${awk} '{print $2}')
+echo "will use ${nvmuse}"
+# binary of node to use on Windows/Cygwin
+winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
+# Git(Hub) key to generate
+gitsshKey=github_ed25519
+
+if command -v node > /dev/null 2>&1 ; then # for Cygwin compatibility
+    nodeInstalled="true"
+else
+    nodeInstalled="false"
+fi
+# "}}}
+
+# UI "{{{
 ####################################################################
 # Get System Info
 ####################################################################
@@ -361,34 +473,6 @@ else
     chmod 600 "$HOME/.ssh/config"
 fi
 
-githubKey="false"
-genGitHub(){
-    githubKey="true"
-    echo -e "\t Generating GitHub Key (~/.ssh/$gitsshKey)"
-    echo "Enter email address for GitHub key:"
-    read -r email;
-    ssh-keygen -o -a 100 -t ed25519 -f "$HOME/.ssh/${gitsshKey}" -C "${email} generated key"
-    cloneDotFiles;
-    cat "$HOME/src/dotfiles/ssh-config-github" >> "$HOME/.ssh/config"
-    echo "Note: you must still upload your key to your GitHub profile!"
-}
-
-setFlags(){
-    readonly "githubKey"
-    readonly "editorInstall"
-}
-
-# These are functions to setup to toggle vim and emacs installation
-# vim will be installed along with vundle and the refactor colorscheme (via .vimrc) by default
-editorInstall=vim
-toggleVimEmacs(){
-        if [ "${editorInstall}" == "vim" ] ; then
-            editorInstall="emacs"
-        else
-            editorInstall="vim"
-        fi
-
-}
 
 # Load menu in interactive mode
 shootProfile
@@ -424,6 +508,7 @@ cloneDotFiles
 
 set -o errexit
 
+# UI "{{{
 #########################################################
 # setup colors for output
 #########################################################
@@ -457,6 +542,7 @@ if [ "${OS}" == "mac" ] || [ "${DistroBasedOn}" = 'redhat' ]; then
 else
     lnopts="-sb"
 fi
+# "}}}
 
 ####################################################################
 # Print Menu
@@ -592,6 +678,7 @@ else
     echo "Will use node version: $nvmuse"
     echo "Application Installer: $AppInstall"
 fi
+# "}}}
 
 # The following is derived for a simple setup originally designed for Ubuntu EC2 instances
 # for headless setup.  Now modified to support MacOS, Cygwin, RHEL and other Linux systems.
@@ -659,87 +746,6 @@ fi
 
 cd "$HOME" || error unable to cd
 
-linkDotfiles(){
-    echo "linking dotfiles..."
-    cd "${HOME}/src/"
-    if [ "${OS}" == "mac" ]; then
-        set +o errexit
-        ln "${lnopts}" dotfiles/.screenrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-        ln "${lnopts}" dotfiles/.bashrc "$HOME"
-        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
-        set -o errexit
-    else
-        ln "${lnopts}" dotfiles/.screenrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-        ln "${lnopts}" dotfiles/.bashrc "$HOME"
-        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
-    fi
-    cd -
-}
-
-
-installEditor(){
-    # Select whether to link vim or emacs dotfiles:
-    if [ "${editorInstall}" == "emacs" ] ; then
-            ln -sf "${HOME}/src/dotfiles/.emacs.d" .
-    elif [ "${editorInstall}" == "vim" ] ; then
-        set +o errexit
-        if [ "${OS}" != "cygwin" ] ; then
-            rm -f "${HOME}/.vimrc"
-            cp -f "${HOME}/src/dotfiles/.vimrc" "${HOME}"
-
-            # install pathogen
-            mkdir -p "${HOME}/.vim/autoload"
-            mkdir -p "${HOME}/.vim/bundle"
-            curl -LSso "${HOME}/.vim/autoload/pathogen.vim" https://tpo.pe/pathogen.vim
-
-
-            # setup vim on CentOS
-            if [ "${DIST}" == "CentOS" ] ; then
-                $AppInstall install  vim-X11 vim-common vim-enhanced vim-minimal
-                echo "alias vi=vim " >> ~/.bashrc_custom
-            fi
-
-        # setup pathogen specific installs by using git clones
-        # note: these should installed on ~/vimfiles on Windows...
-            cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
-            # shellcheck disable=SC1090
-            source "${HOME}/src/dotfiles/.git_template/config.sh"
-            # git init
-            # git submodule add "${commandt}" bundle/command-t
-            yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
-            # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
-            # yellow "Installing ctrl-p..."
-
-        # Warn user that non-interactive vim will show and to wait for process to complete
-            # echo " "
-            # echo -e '\n\033[43;35m'"  vim will now be run non-interactively to install the bundles and plugins\033[0m   "
-            # echo -e '\n\033[43;35m'" Please wait for this process to be completed -- it may take a few moments\033[0m  "
-            # echo " "
-            # sleep 7
-        # Install bundles and vim-plug for neovim
-            curl -fLo "${HOME}/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-            if [ "${OS}" == "mac" ]; then # install VimR
-                cyan "Install latest VimR from https://github.com/qvacua/vimr/releases"
-                cyan "Then remember to run :PlugInstall"
-            else # install Neovim
-                curl -LO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
-                chmod u+x nvim.appimage
-                ./nvim.appimage
-            fi
-        else
-            echo -e "not installing VIM bundles on Cygwin..."
-            # add Cygwin specifics to customized bashrc
-            echo "export TERM=cygwin" >> ~/.bashrc_custom
-            echo "alias sudo='cygstart --action=runas' " >> ~/.bashrc_custom
-        fi
-        set -o errexit
-    fi
-}
-
 linkDotfiles
 installEditor
 # append to custom rc file rather than linking -- this is changed from Balaji's script
@@ -763,10 +769,12 @@ if [ "${OS}" == "mac" ]; then
     echo 'export CHROME_BIN=/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary' >> ~/.bashrc_custom
     # shellcheck disable=SC2016
     echo 'DebugBrowser="${CHROME_BIN}"'  >> ~/.bashrc_custom
-# add Visual Studio config for git
+
+  # add Visual Studio config for git
     git config --global core.autocrlf input
     git config --global core.safecrlf false
 fi
+
 # add better git log
 git config --global alias.lg1 "log --graph --abbrev-commit --decorate --first-parent --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
 
@@ -786,9 +794,10 @@ cp "${HOME}/src/dotfiles/html.vim" ~/.vim
 # Copy git template files for ctags to home dir
 cp -R "${HOME}/src/dotfiles/.git_template/" "${HOME}/.git_template"
 
-echo "This script automatically installed ${gitdotfiles} to ~/dotfiles. These files can be used with Docker shell"
-echo " "
+echo "This script automatically installed ${gitdotfiles} to ~/src/dotfiles. These files can be used with Docker shell"
+echo
 echo "Be sure to logout and log back in to properly setup your environment"
 echo "Copy appropriate config file (AngularJS, React, Flow, etc) from within ~/.git_template/ to ~/.git_template/config"
-echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags"
-echo "Then execute: git config --global init.templatedir '~/.git_template'"
+echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags for Angular,"
+echo "React indexing is setup for neovim via corresponding init.vim in dotfiles/"
+echo "Then execute: git config --global init.templatedir '~/.git_template' if using Angular"
