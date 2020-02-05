@@ -25,9 +25,9 @@
 # setup some useful error handling functions
 #########################################################
 
+# Setup "{{{
 echoerr() { echo "$@" 1>&2; }
 
-# Setup "{{{
 # shellcheck disable=SC2120
 usage() {
  	echoerr "$(basename "$0")": ERROR: "$*" 1>&2
