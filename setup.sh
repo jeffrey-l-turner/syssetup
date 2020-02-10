@@ -119,6 +119,7 @@ if [ -f "$(command -v git)" ]; then
 else
     gitInstalled="false"
     echo "Git not installed..."
+    exit 1
 fi
 
 installrlwrap() {
