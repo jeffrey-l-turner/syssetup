@@ -351,7 +351,7 @@ installNVM
 
 # Version of Node to use:
 # shellcheck disable=SC2016
-nvmuse=$(nvm ls-remote --no-colors | grep -i -- '->' | ${awk} '{print $2}')
+nvmuse=$(nvm ls-remote --no-colors --lts | tail -1 | ${awk} -f '{print $1}')
 echo "will use ${nvmuse}"
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
