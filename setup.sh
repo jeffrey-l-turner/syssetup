@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env /bin/bash
 # Script to setup headless node system as general shell
 # on *nix
 #########################################################
@@ -115,9 +115,11 @@ installNVM(){
         $AppInstall install openssl
     fi
     # shellcheck disable=SC1090
-    if !  . "$HOME/.nvm/nvm.sh" ; then
+    if !  . "${HOME}/.nvm/nvm.sh" ; then
         echoerr 'nvm nott installed properly'
         exit 1;
+      else
+        source "${HOME}/.nvm/nvm.sh"
     fi
     set -o errexit
 }
