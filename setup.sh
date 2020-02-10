@@ -189,13 +189,17 @@ installBashCompletion (){
     if [ "$bashCompletion" == "false" ]; then
         if [ "${OS}" != "mac" ]; then
             # set note on bash completion in ~/.bashrc_custom
-            echo "Installing git and bash-completion via brew since Apple's"
+            echo "Installing git and bash-completion"
             echo "git has compatibility problems with git-flow-completion"
-            $AppInstall install git-flow-completion
             if ! $AppInstall install bash-completion; then
                 echo '# setup bash completion setup for shell' >> "$HOME/.bashrc_custom"
             else
                 echo '# setup bash completion not setup; must manually enable' >> "$HOME/.bashrc_custom"
+            fi
+            gfurl="https://raw.githubusercontent.com/bobthecow/git-flow-completion/master/git-flow-completion.bash"
+            curl "${gfurl}" > /etc/bash_completion.d/git-flow-completion.bash
+            if "$?" -ne 0; then
+              echo "git-flow-completion not installed, see: https://github.com/bobthecow/git-flow-completion"
             fi
         fi
         if [ "${OS}" == "cygwin" ]; then
