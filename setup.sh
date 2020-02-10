@@ -116,7 +116,7 @@ installNVM(){
     fi
     # shellcheck disable=SC1090
     if !  . "${HOME}/.nvm/nvm.sh" ; then
-        echoerr 'nvm nott installed properly'
+        echoerr 'nvm not installed properly'
         exit 1;
       else
         source "${HOME}/.nvm/nvm.sh"
@@ -353,7 +353,7 @@ installNVM
 
 # Version of Node to use:
 # shellcheck disable=SC2016
-nvmuse=$(nvm ls-remote --no-colors --lts | tail -1 | ${awk} -f '{print $1}')
+nvmuse=$(nvm ls-remote --no-colors --lts | tail -1 | ${awk} '{print $1}')
 echo "will use ${nvmuse}"
 # binary of node to use on Windows/Cygwin
 winNode="http://nodejs.org/dist/${nvmuse}/x64/node-${nvmuse}-x64.msi"
