@@ -73,6 +73,30 @@ else
 fi
 # "}}}
 
+# location of dotfiles on Git
+# not using git ssh key to insure easy copy without adding key
+# originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
+# change ~/dotfiles/.git/config to above url if pushing/pulling from that repo
+gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
+
+# location of vundle on Git
+vundle="https://github.com/gmarik/vundle.git"
+
+# location of pathogent specific plugins (using generally)
+commandt="https://github.com/wincent/command-t.git"
+
+lowercase(){
+    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+if [ -f "$(command -v git)" ]; then
+    gitInstalled="true"
+else
+    gitInstalled="false"
+    echo "Git not installed... Git must be installed!"
+    exit 1
+fi
+
 # Functions & Core env vars"{{{
 installNVM(){
     set +o errexit # nvm shell scripts have a habit of return non-zero error codes upon success
@@ -97,30 +121,6 @@ installNVM(){
     fi
     set -o errexit
 }
-
-# location of dotfiles on Git
-# not using git ssh key to insure easy copy without adding key
-# originally: gitdotfiles="git@github.com:jeffrey-l-turner/dotfiles.git"
-# change ~/dotfiles/.git/config to above url if pushing/pulling from that repo
-gitdotfiles="https://github.com/jeffrey-l-turner/dotfiles.git"
-
-# location of vundle on Git
-vundle="https://github.com/gmarik/vundle.git"
-
-# location of pathogent specific plugins (using generally)
-commandt="https://github.com/wincent/command-t.git"
-
-lowercase(){
-    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
-}
-
-if [ -f "$(command -v git)" ]; then
-    gitInstalled="true"
-else
-    gitInstalled="false"
-    echo "Git not installed..."
-    exit 1
-fi
 
 installrlwrap() {
   # Install rlwrap to provide libreadline features with node
@@ -348,6 +348,7 @@ installEditor(){
 
 # NVM setup "{{{
 installNVM
+
 # Version of Node to use:
 # shellcheck disable=SC2016
 nvmuse=$(nvm ls-remote --no-colors | grep -i -- '->' | ${awk} '{print $2}')
