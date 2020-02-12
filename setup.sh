@@ -668,7 +668,7 @@ runOption(){
 # set to exit on any errors before non-interactive mode check
 set -o errexit
 
-# Only have susccesfully used following as means to test for interactivity
+# Only have succesfully used following as means to test for interactivity
 if tty -s ; then
     echo "Interactive mode..."
     printMenu
