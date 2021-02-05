@@ -276,18 +276,18 @@ linkDotfiles(){
     cd "${HOME}/src/"
     if [ "${OS}" == "mac" ]; then
         set +o errexit
-        ln "${lnopts}" dotfiles/.screenrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-        ln "${lnopts}" dotfiles/.bashrc "$HOME"
-        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" ${{HOME}/src/dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.bash_logout "$HOME"
         set -o errexit
     else
-        ln "${lnopts}" dotfiles/.screenrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_profile "$HOME"
-        ln "${lnopts}" dotfiles/.bashrc "$HOME"
-        ln "${lnopts}" dotfiles/.jshintrc "$HOME"
-        ln "${lnopts}" dotfiles/.bash_logout "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.screenrc "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.bash_profile "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.bashrc "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.jshintrc "$HOME"
+        ln "${lnopts}" ${HOME}/src/dotfiles/.bash_logout "$HOME"
     fi
     cd -
 }
@@ -503,7 +503,7 @@ if [ "${OS}" == "mac" ]; then
         exit 1
     fi
     if [ ! -f "$(command -v brew)" ]; then
-        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     fi
     brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
     pip3 install neovim --upgrade
@@ -807,5 +807,5 @@ echo
 echo "Be sure to logout and log back in to properly setup your environment"
 echo "Copy appropriate config file (AngularJS, React, Flow, etc) from within ~/.git_template/ to ~/.git_template/config"
 echo "In the new shell, execute ~/.git_template/config.sh to finishing setting up git to auto-index ctags for Angular,"
-echo "React indexing is setup for neovim via corresponding init.vim in dotfiles/"
+echo "React indexing is setup for neovim via corresponding init.vim in ~/src/dotfiles/"
 echo "Then execute: git config --global init.templatedir '~/.git_template' if using Angular"
