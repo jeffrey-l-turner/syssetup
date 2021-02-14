@@ -314,16 +314,12 @@ installEditor(){
                 echo "alias vi=vim " >> ~/.bashrc_custom
             fi
 
-        # setup pathogen specific installs by using git clones
-        # note: these should installed on ~/vimfiles on Windows...
+        # setup per https://tbaggery.com/2011/08/08/effortless-ctags-with-git.html
             cd "${HOME}/.vim" || error "unable to cd ${HOME}/.vim"
             # shellcheck disable=SC1090
             source "${HOME}/src/dotfiles/.git_template/config.sh"
-            # git init
-            # git submodule add "${commandt}" bundle/command-t
-            yellow "Installing ${commandt} as pathogen git submodule; cd ~/.vim/bundle/ \& use git pull to update"
-            # git clone https://github.com/kien/ctrlp.vim.git bundle/ctrlp.vim
-            # yellow "Installing ctrl-p..."
+            echo -n "run:"
+            green "git ctags in git repos to index ctags"
 
         # Warn user that non-interactive vim will show and to wait for process to complete
             # echo " "
