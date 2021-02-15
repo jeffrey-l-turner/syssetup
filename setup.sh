@@ -501,7 +501,8 @@ if [ "${OS}" == "mac" ]; then
     if [ ! -f "$(command -v brew)" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     fi
-    brew install ctags python python3 bash-completion # ctags may no be longer needed now with flow
+    brew install --HEAD universal-ctags/universal-ctags/universal-ctags # switching to unversal from old exuberant
+    brew install python python3 bash-completion
     pip3 install neovim --upgrade
     pip3 install vim-vint # for vim linting
     brew install neovim
