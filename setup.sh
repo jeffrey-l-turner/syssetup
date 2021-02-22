@@ -168,6 +168,15 @@ installCommonUtils() {
   $AppInstall install exa
 }
 
+# for Deno installation
+installDeno() {
+  curl -fsSL https://deno.land/x/install/install.sh | sh
+  if [ "${OS}" == "mac" ]; then # install completions on mac
+    mkdir -p "$(brew --prefix)/Cellar/bash-completion/deno-completion"
+    deno completions > "$(brew --prefix)/Cellar/bash-completion/deno-completion/deno-completion.bash"
+  fi
+}
+
 # git pull and install dotfiles if not already cloned previously- modified as function for use with adding ssh keys
 dotFilesCloned="false"
 cloneDotFiles(){
@@ -713,6 +722,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
 
   installrlwrap
   installCommonUtils
+  installDeno
 
 else # install node globally via binary
     npm="npm"
