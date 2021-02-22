@@ -170,10 +170,12 @@ installCommonUtils() {
 
 # for Deno installation
 installDeno() {
+  if ! which deno >/dev/null 2>&1; then
   curl -fsSL https://deno.land/x/install/install.sh | sh
-  if [ "${OS}" == "mac" ]; then # install completions on mac
-    mkdir -p "$(brew --prefix)/Cellar/bash-completion/deno-completion"
-    deno completions > "$(brew --prefix)/Cellar/bash-completion/deno-completion/deno-completion.bash"
+    if [ "${OS}" == "mac" ]; then # install completions on mac
+      mkdir -p "$(brew --prefix)/Cellar/bash-completion/deno-completion"
+      deno completions > "$(brew --prefix)/Cellar/bash-completion/deno-completion/deno-completion.bash"
+    fi
   fi
 }
 
