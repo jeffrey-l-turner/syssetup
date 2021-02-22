@@ -25,6 +25,8 @@
 # setup some useful error handling functions
 #########################################################
 
+set -o nounset # error if rreferencing undefined var
+
 # Setup "{{{
 echoerr() { echo "$@" 1>&2; }
 
@@ -159,6 +161,11 @@ installGit() {
        fi
     fi
     gitInstalled="true"
+}
+
+# for common Mac/Linux Utils
+installCommonUtils() {
+  $AppInstall install exa
 }
 
 # git pull and install dotfiles if not already cloned previously- modified as function for use with adding ssh keys
@@ -705,6 +712,7 @@ if [ "${OS}" != "cygwin" ]; then  # install nvm and other packages for *nix
   "${npm}" install -g eslint js-beautify jsonlint repl.history npm-completion
 
   installrlwrap
+  installCommonUtils
 
 else # install node globally via binary
     npm="npm"
