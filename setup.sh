@@ -65,6 +65,11 @@ if  [ "$#" -ne 0 ]; then
     usage
 fi
 
+lowercase(){
+    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+OS=$(lowercase "$(uname)")
 # set to use gawk on Mac OS
 if [ "${OS}" = "mac" ]; then
    # some niceties for MacOS, and replae crappy Xcode git & use a real awk
@@ -86,10 +91,6 @@ vundle="https://github.com/gmarik/vundle.git"
 
 # location of pathogent specific plugins (using generally)
 commandt="https://github.com/wincent/command-t.git"
-
-lowercase(){
-    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
-}
 
 if [ -f "$(command -v git)" ]; then
     gitInstalled="true"
